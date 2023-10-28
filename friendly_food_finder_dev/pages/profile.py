@@ -1,4 +1,5 @@
 """The profile page."""
+from typing import List
 from friendly_food_finder_dev.templates import template
 from friendly_food_finder_dev.state import State
 from friendly_food_finder_dev.pages.auth import require_google_login
@@ -11,6 +12,10 @@ from google.auth.transport import requests
 from google.oauth2.id_token import verify_oauth2_token
 
 import reflex as rx
+
+budget_options: List[str] = ['$', '$$', '$$$', '$$$$']
+
+budget_options: List[str] = ['$', '$$', '$$$', '$$$$']
 
 from ..react_oauth_google import GoogleOAuthProvider, GoogleLogin
 
@@ -67,6 +72,11 @@ def profile() -> rx.Component:
                         rx.switch('Mediterranean', is_checked=State.update_mediterranean, on_change=State.set_update_mediterranean),
                         rx.switch('Italian', is_checked=State.update_italian, on_change=State.set_update_italian),
                     )),
+                    ("Budget per meal", rx.select(
+                        budget_options,
+                        value=State.update_budget,
+                        on_change=State.set_update_budget
+                    ))
                 ],
             )
         ),
@@ -78,7 +88,8 @@ def profile() -> rx.Component:
             'american': State.update_american,
             'mexican': State.update_mexican,
             'mediterranean': State.update_mediterranean,
-            'italian': State.update_italian
+            'italian': State.update_italian,
+            'budget': State.update_budget
         })),
         rx.button("Logout", on_click=State.logout),
     )
