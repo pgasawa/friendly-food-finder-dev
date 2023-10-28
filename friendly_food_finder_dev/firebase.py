@@ -16,7 +16,7 @@ class Firebase:
         else:
             # Document does not exist
             return None
-        
+            
     def query_by_condition(self, collection_name: str, field_name: str, operator: str, value: str):
         docs = self.db.collection(collection_name).where(field_name, operator, value).stream()
         result = []
@@ -43,9 +43,9 @@ class Firebase:
 
     def get_all_documents_from_collection(self, collection_name):
         result = []
-        docs = self.db.collection("cities").stream()
+        docs = self.db.collection(collection_name).stream()
         for doc in docs:
-            result.append(doc)
+            result.append(doc.to_dict())
         return result
 
 firestore_client = Firebase()
