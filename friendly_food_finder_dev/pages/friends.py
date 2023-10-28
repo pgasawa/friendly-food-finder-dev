@@ -1,5 +1,6 @@
 """The friends page."""
 from friendly_food_finder_dev.templates import template
+from friendly_food_finder_dev.state import State
 
 import reflex as rx
 
@@ -13,6 +14,8 @@ def friends() -> rx.Component:
     """
     return rx.vstack(
         rx.heading("Friends", font_size="3em"),
-        rx.text("Welcome to friends!"),
-        rx.text("You have no friends and you never will <3"),
+        rx.input(on_change=State.set_user_addfriend_email, placeholder="Friend Email", type_="email"),
+        rx.button("Add Friend", on_click=State.user_addfriend),
+        rx.heading("Your Friends", font_size="2em"),
+        rx.text("Coming Soon..."),
     )
