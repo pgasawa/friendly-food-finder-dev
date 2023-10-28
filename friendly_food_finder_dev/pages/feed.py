@@ -1,10 +1,12 @@
 """The feed page."""
 from friendly_food_finder_dev.templates import template
+from friendly_food_finder_dev.pages.auth import require_google_login
 
 import reflex as rx
 
 
 @template(route="/feed", title="Feed")
+@require_google_login
 def feed() -> rx.Component:
     """The feed page.
 
