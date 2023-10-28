@@ -22,20 +22,7 @@ class State(rx.State):
     curr_name: str
     curr_email: str
 
-    user_signin_email: str
-    user_signin_password: str
-
     user_addfriend_email: str
-    
-    def user_signin(self):
-        doc_data = firestore_client.read_from_document('user', self.user_signin_email)
-        if doc_data is None:
-            return rx.window_alert('The email does not exist')
-        if doc_data['password'] != self.user_signin_password:
-            return rx.window_alert('The password is incorrect')
-        self.curr_email = self.user_signin_email
-        self.curr_name = doc_data['name']
-        return rx.window_alert(f'You signed in, {self.curr_name}!')
 
     def user_addfriend(self):
         if not self.curr_email or len(self.curr_email) == 0:
