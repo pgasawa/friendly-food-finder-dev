@@ -17,7 +17,7 @@ class Firebase:
         else:
             # Document does not exist
             return None
-        
+            
     def query_by_condition(self, collection_name: str, field_name: str, operator: str, value: str):
         docs = self.db.collection(collection_name).where(field_name, operator, value).stream()
         result = []
@@ -46,8 +46,6 @@ class Firebase:
         result = []
         docs = self.db.collection(collection_name).stream()
         for doc in docs:
-            doc_to_dict = doc.to_dict()
-            doc_to_dict["time"] = doc_to_dict["time"].isoformat()
             result.append(doc.to_dict())
         return result
 
