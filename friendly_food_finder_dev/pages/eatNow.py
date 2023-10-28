@@ -1,6 +1,7 @@
 """The eatNow page."""
 from friendly_food_finder_dev.templates import template
 from friendly_food_finder_dev.pages.auth import require_google_login
+from friendly_food_finder_dev.state import State
 
 import reflex as rx
 import requests
@@ -23,7 +24,7 @@ def eatNow() -> rx.Component:
     )
 
 def get_free_friends():
-    friends = []
+    friends = State.all_friends
     # TODO: filter friends by who is free for the next hour.
 
     # TODO: filter friends by who is within a certain distance.

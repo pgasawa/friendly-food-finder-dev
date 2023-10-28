@@ -30,15 +30,16 @@ class State(rx.State):
             'requestee': self.user_add_friend_email,
         })
         friend_name = friend_doc['name']
-        return rx.window_alert(f'You are now friends with {friend_name}!')
 
-    def user_show_all_friends(self):
-        # friend_docs = firestore_client.query_by_condition('friend', 'requester', '==', self.tokeninfo['email'])
-        # user_docs = []
-        # for friend_doc in friend_docs:
-        #     user_doc = firestore_client.read_from_document('user', friend_doc['requestee'])
-        #     user_docs.append(friend_doc.to_dict())
-        raise NotImplementedError
+    @rx.var
+    def all_friends(self) -> List[dict[str, str]]:
+        friend_docs = firestore_client.query_by_condition('friend', 'requester', '==', self.tokeninfo['email'])
+        user_docs = []
+        for friend_doc in friend_docs:
+            user_doc = firestore_client.read_from_document('user', friend_doc['requestee'])
+            user_docs.append(user_doc)
+        print(user_docs)
+        return user_docs
 
     def user_show_available_friends():
         raise NotImplementedError

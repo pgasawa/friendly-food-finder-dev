@@ -14,10 +14,18 @@ def friends() -> rx.Component:
     Returns:
         The UI for the friends page.
     """
+    def friend_item(friend):
+        return rx.hstack(
+            rx.image(
+                src=friend['picture'], width="100px", height="auto"
+            ),
+            rx.text(friend['name']),
+        )
+
     return rx.vstack(
         rx.heading("Friends", font_size="3em"),
         rx.input(on_change=State.set_user_add_friend_email, placeholder="Friend Email", type_="email"),
         rx.button("Add Friend", on_click=State.user_add_friend),
         rx.heading("Your Friends", font_size="2em"),
-        rx.text("Coming Soon..."),
+        rx.foreach(State.all_friends, friend_item),
     )
