@@ -36,8 +36,8 @@ class State(rx.State):
         # friend_docs = firestore_client.query_by_condition('friend', 'requester', '==', self.tokeninfo['email'])
         # user_docs = []
         # for friend_doc in friend_docs:
-        #     firestore_client.query_by_condition
-        #     # user_docs.append(friend_doc.to_dict())
+        #     user_doc = firestore_client.read_from_document('user', friend_doc['requestee'])
+        #     user_docs.append(friend_doc.to_dict())
         raise NotImplementedError
 
     def user_showavailablefriends():
@@ -80,7 +80,16 @@ class State(rx.State):
                 requests.Request(),
                 CLIENT_ID,
             )
-            print('tokeninfo:', result)
+            
+            # Create user if it doesn't exist
+            user_doc = firestore_client.read_from_document('user', result['email'])
+            if user_doc is None:
+                firestore_client.write_data_to_collection('user', result['email'], {
+                    'name': result['name'],
+                    'email': result['email'],
+                    'picture': result['picture']
+                })
+
             return result
         except Exception as exc:
             if self.id_token_json:
