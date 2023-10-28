@@ -25,7 +25,9 @@ def friends() -> rx.Component:
     return rx.vstack(
         rx.heading("Friends", font_size="3em"),
         rx.input(on_change=State.set_user_add_friend_email, placeholder="Friend Email", type_="email"),
+        rx.spacer(),
         rx.button("Add Friend", on_click=State.user_add_friend),
+        rx.spacer(),
         rx.heading("Your Friends", font_size="2em"),
         rx.foreach(State.all_friends, friend_item),
     )
