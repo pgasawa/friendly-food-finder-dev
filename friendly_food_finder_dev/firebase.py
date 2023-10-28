@@ -37,9 +37,11 @@ class Firebase:
 
     def get_all_documents_from_collection(self, collection_name):
         result = []
-        docs = self.db.collection("cities").stream()
+        docs = self.db.collection(collection_name).stream()
         for doc in docs:
-            result.append(doc)
+            doc_to_dict = doc.to_dict()
+            doc_to_dict["time"] = doc_to_dict["time"].isoformat()
+            result.append(doc.to_dict())
         return result
 
 firestore_client = Firebase()

@@ -29,6 +29,9 @@ class State(rx.State):
             })
             return rx.window_alert('You signed up!')
 
+    def update_feed():
+        raise NotImplementedError
+
     def user_signin():
         raise NotImplementedError
 
