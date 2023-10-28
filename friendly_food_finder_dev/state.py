@@ -4,7 +4,7 @@ import uuid
 from typing import List
 import reflex as rx
 from friendly_food_finder_dev.firebase import firestore_client
-
+from google.cloud.firestore import ArrayUnion, ArrayRemove
 import os
 import os.path
 import json
@@ -50,7 +50,8 @@ class State(rx.State):
                 'american': False,
                 'mexican': False,
                 'mediterranean': False,
-                'italian': False
+                'italian': False,
+                'friends': []
             }
             firestore_client.write_data_to_collection('user', self.tokeninfo['email'], user_doc)
         
@@ -127,6 +128,9 @@ class State(rx.State):
             'requestee': self.user_add_friend_email,
         })
         friend_name = friend_doc['name']
+        user_doc_name = self.tokeninfo["email"]
+        user_docref = firestore_client.db.collection("user").document(user_doc_name)
+        user_docref.update({"friends": ArrayUnion([{self.user_add_friend_email: {'closeness': "Hella tight"}}])})
 
     @rx.var
     def all_friends(self) -> List[dict[str, str]]:
@@ -135,6 +139,7 @@ class State(rx.State):
         for friend_doc in friend_docs:
             user_doc = firestore_client.read_from_document('user', friend_doc['requestee'])
             user_docs.append(user_doc)
+        print(user_docs)
         return user_docs
     
     def update_profile(self, prefs: dict[str, bool]):
@@ -149,6 +154,16 @@ class State(rx.State):
             'italian': prefs['italian']
         }
         firestore_client.update_data_in_collection('user', self.tokeninfo['email'], new_doc)
+
+
+    def update_friend_closeness(self, option, friend_email):
+        user_doc_name = self.tokeninfo["email"]
+        friend_data = firestore_client.read_from_document("user", user_doc_name)["friends"]
+        for i in range(len(friend_data)):
+            if friend_email in friend_data[i]:
+                friend_data[i][friend_email] = {"closeness": option}
+        user_docref = firestore_client.db.collection("user").document(user_doc_name)
+        user_docref.update({"friends": friend_data})
 
     def user_show_available_friends():
         raise NotImplementedError
@@ -194,7 +209,6 @@ class State(rx.State):
                 requests.Request(),
                 CLIENT_ID,
             )
-
             return result
         except Exception as exc:
             if self.id_token_json:
@@ -213,3 +227,11 @@ class State(rx.State):
             )
         except Exception:
             return False
+
+    @rx.cached_var
+    def protected_content(self) -> str:
+        if self.token_is_valid:
+            return f"This content can only be viewed by a logged in User. Nice to see you {self.tokeninfo['name']}"
+        return "Not logged in."
+    
+   
