@@ -9,6 +9,7 @@ import math
 import reflex as rx
 import random
 import requests
+import json
 # import folium
 import os
 
@@ -53,7 +54,7 @@ def eatNow() -> rx.Component:
                             rx.text(meal[1].get("price")),
                         ),
                         # rx.image(src=folium.Marker([meal[1].get('coordinates').get('latitude'), meal[1].get('coordinates').get('longitude')], tooltip=meal[1].get("mame")).add_to(folium.Map(location=[meal[1].get('coordinates').get('latitude'), meal[1].get('coordinates').get('longitude')], zoom_start=15)).get_root().render(), width="300px", height="300px"),
-                        rx.image(src=meal[1].get("image_url"), width="300px", height="300px"),
+                        rx.image(src=meal[1].get("image_url"), width="300px", height="250px"),
                     ),
                     header=rx.heading(meal[0]),
                 )
@@ -85,7 +86,7 @@ def get_free_friends():
     friend_emails = [list(x.keys())[0] for x in firestore_client.read_from_document('user', 'ayushibatwara@gmail.com').get('friends')]
     friends = [firestore_client.read_from_document('user', friend_email) for friend_email in friend_emails]
     friends = [friend for friend in friends if not does_user_have_conflict(friend['email'], 0, 1)]
-    friends = [friend for friend in friends if haversine(37.86531319642755, -122.2695501637612, friend['latitude'], friend['longitude']) < 1000]
+    friends = [friend for friend in friends if haversine(37.7845607111444, -122.40337703253672, friend['latitude'], friend['longitude']) < 1000]
     return friends
 
 def possible_meals():
@@ -94,26 +95,23 @@ def possible_meals():
     radius = 600
     
     # TODO need user doc
-    # user = firestore_client.read_from_document('user', State.tokeninfo['email'])
     user = firestore_client.read_from_document('user', 'ayushibatwara@gmail.com')
-    viable_list = get_nearby_restaurants(user, radius)
-    # price_set = []
-    # if State.lowChecked:
-    #     price_set.append("$")
-    # if State.midChecked:
-    #     price_set.append("$$")
-    # if State.highChecked:
-    #     price_set.append("$$$")
-    price_set = ['$', '$$']
-    # print(viable_list)
+    # viable_list = get_nearby_restaurants(user, radius)
+    viable_list = json.load(open('restaurant_pre_list.json', 'r'))['data']
+    # get_nearby_restaurants(user, radius)
+
+    price_set = ['$', '$$', '$$$']
     viable_list = [x for x in viable_list if x.get("price") in price_set]
     possible_meals = {}
 
+    # for friend in friends:
+    #     intersection = [dict1 for dict1 in viable_list for dict2 in viable_list if dict1.get("name") == dict2.get("name")]
+    #     if intersection:
+    #         possible_meals[friend.get('name')] = intersection
+
     for friend in friends:
-        intersection = [dict1 for dict1 in viable_list for dict2 in get_nearby_restaurants(friend) if dict1.get("name") == dict2.get("name")]
-        if intersection:
-            possible_meals[friend.get('name')] = intersection
-    print("HELLO", possible_meals)
+        possible_meals[friend.get('name')] = viable_list
+
     keys = list(possible_meals.keys())
     random.shuffle(keys)
 
