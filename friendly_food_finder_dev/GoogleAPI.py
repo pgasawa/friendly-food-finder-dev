@@ -12,8 +12,7 @@ from googleapiclient.errors import HttpError
 # If modifying these scopes, delete the file token.json.
 SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']
 
-
-def main():
+def get_scheudle(hours=2):
     """Shows basic usage of the Google Calendar API.
     Prints the start and name of the next 10 events on the user's calendar.
     """
@@ -69,6 +68,3 @@ def stringToDateTime(str):
     
 def dateTimeToString(time):
     return time.isoformat() + 'Z'
-
-if __name__ == '__main__':
-    main()

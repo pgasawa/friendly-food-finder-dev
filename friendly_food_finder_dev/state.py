@@ -6,11 +6,14 @@ import reflex as rx
 from friendly_food_finder_dev.firebase import firestore_client
 
 import os
+import os.path
 import json
 import time
 
 from google.auth.transport import requests
 from google.oauth2.id_token import verify_oauth2_token
+
+from . import GoogleAPI
 
 CLIENT_ID = "419615612188-fupdhp748n09ba2ibt0qi9633lk1pkhp.apps.googleusercontent.com"
 
@@ -68,9 +71,14 @@ class State(rx.State):
 
     def on_success(self, id_token: dict):
         self.id_token_json = json.dumps(id_token)
+        print(GoogleAPI.get_scheudle(self.google_auth_token))
 
-    def get_google_token(self):
-        return self.id_token_json
+    @rx.cached_var
+    def google_auth_token(self) -> dict[str, str]:
+        try:
+            return json.loads(self.id_token_json)
+        except Exception as e:
+            return {}
 
     @rx.cached_var
     def tokeninfo(self) -> dict[str, str]:
@@ -80,7 +88,6 @@ class State(rx.State):
                 requests.Request(),
                 CLIENT_ID,
             )
-            print('tokeninfo:', result)
             return result
         except Exception as exc:
             if self.id_token_json:
@@ -89,6 +96,8 @@ class State(rx.State):
 
     def logout(self):
         self.id_token_json = ""
+        if os.path.exists('token.json'):
+            os.remove('token.json')
 
     @rx.var
     def token_is_valid(self) -> bool:

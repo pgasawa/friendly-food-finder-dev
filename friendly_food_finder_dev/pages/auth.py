@@ -48,7 +48,7 @@ def require_google_login(page) -> rx.Component:
                 rx.cond(State.token_is_valid, page(), login()),
                 rx.spinner(),
             ),
-            client_id=CLIENT_ID,
+            client_id=CLIENT_ID
         )
     return _auth_wrapper
 
