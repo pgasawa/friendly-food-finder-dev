@@ -5,23 +5,7 @@ from friendly_food_finder_dev.state import State
 
 import reflex as rx
 
-
-def sidebar_header() -> rx.Component:
-    """Sidebar header.
-
-    Returns:
-        The sidebar header component.
-    """
-    return rx.hstack(
-        # Title of the app.
-        rx.text("Friendly Food Finder!", font_size="2em"),
-        width="100%",
-        border_bottom=styles.border,
-        padding="1em",
-    )
-
-
-def sidebar_item(text: str, icon: str, url: str) -> rx.Component:
+def footer_item(text: str, icon: str, url: str) -> rx.Component:
     """Sidebar item.
 
     Args:
@@ -67,39 +51,36 @@ def sidebar_item(text: str, icon: str, url: str) -> rx.Component:
     )
 
 
-def sidebar() -> rx.Component:
-    """The sidebar.
+def footer() -> rx.Component:
+    """The footer.
 
     Returns:
-        The sidebar component.
+        The footer component.
     """
-    # Get all the decorated pages and add them to the sidebar.
+    # Get all the decorated pages and add them to the footer.
     from reflex.page import get_decorated_pages
 
     return rx.box(
-        rx.vstack(
-            sidebar_header(),
-            rx.vstack(
-                *[
-                    sidebar_item(
-                        text=page.get("title", page["route"].strip("/").capitalize()),
-                        icon=page.get("image", "/friendly-food.png"),
-                        url=page["route"],
-                    )
-                    for page in get_decorated_pages()
-                ],
-                width="100%",
-                overflow_y="auto",
-                align_items="flex-start",
-                padding="1em",
-            ),
-            rx.spacer(),
-            height="100dvh",
+        rx.hstack(
+            *[
+                footer_item(
+                    text=page.get("title", page["route"].strip("/").capitalize()),
+                    icon=page.get("image", "/friendly-food.png"),
+                    url=page["route"],
+                )
+                for page in get_decorated_pages()
+            ],
+            width="100%",
+            overflow_x="auto",
+            align_items="flex-start",
+            padding="1em",
         ),
+        rx.spacer(),
         display=["none", "none", "block"],
         min_width=styles.sidebar_width,
-        height="100%",
-        position="sticky",
-        top="0px",
-        border_right=styles.border,
+        width="95%",
+        height="0em",
+        position="relative",
+        bottom="0px",
+        border_top=styles.border,
     )
