@@ -2,7 +2,6 @@
 from friendly_food_finder_dev.templates import template
 
 import reflex as rx
-from friendly_food_finder_dev import Firebase
 
 
 @template(route="/feed", title="Feed")
