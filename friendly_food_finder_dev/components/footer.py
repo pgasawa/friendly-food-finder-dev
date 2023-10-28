@@ -68,7 +68,7 @@ def footer() -> rx.Component:
                     icon=page.get("image", "/friendly-food.png"),
                     url=page["route"],
                 )
-                for page in get_decorated_pages()
+                for page in get_decorated_pages() if page.get("title", page["route"].strip("/").capitalize()) not in ["Auth", "Settings", "Home"]
             ],
             width="100%",
             overflow_x="auto",

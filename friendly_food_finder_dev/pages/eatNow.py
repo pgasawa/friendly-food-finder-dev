@@ -9,6 +9,7 @@ import math
 import reflex as rx
 import random
 import requests
+# import folium
 import os
 
 from dotenv import load_dotenv
@@ -51,9 +52,8 @@ def eatNow() -> rx.Component:
                             ),
                             rx.text(meal[1].get("price")),
                         ),
-                        rx.hstack(
-                            rx.image(src=meal[1].get("image_url"), width="300px", height="300px"),
-                        )
+                        # rx.image(src=folium.Marker([meal[1].get('coordinates').get('latitude'), meal[1].get('coordinates').get('longitude')], tooltip=meal[1].get("mame")).add_to(folium.Map(location=[meal[1].get('coordinates').get('latitude'), meal[1].get('coordinates').get('longitude')], zoom_start=15)).get_root().render(), width="300px", height="300px"),
+                        rx.image(src=meal[1].get("image_url"), width="300px", height="300px"),
                     ),
                     header=rx.heading(meal[0]),
                 )
@@ -113,7 +113,6 @@ def possible_meals():
         intersection = [dict1 for dict1 in viable_list for dict2 in get_nearby_restaurants(friend) if dict1.get("name") == dict2.get("name")]
         if intersection:
             possible_meals[friend.get('name')] = intersection
-    print("TIGER", list(possible_meals.keys()))
     print("HELLO", possible_meals)
     keys = list(possible_meals.keys())
     random.shuffle(keys)
@@ -131,7 +130,7 @@ def get_nearby_restaurants(user, radius=600):
     api_key = os.environ.get('YELP_API_KEY')
 
     # TODO: get lat long by username
-    latitude, longitude = 37.86531319642755, -122.2695501637612
+    latitude, longitude = 37.7845607111444, -122.40337703253672
 
     # Set the search parameters
     params = {
