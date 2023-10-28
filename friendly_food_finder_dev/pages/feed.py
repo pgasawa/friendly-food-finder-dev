@@ -12,6 +12,17 @@ def feed() -> rx.Component:
     Returns:
         The UI for the feed page.
     """
+    # return rx.vstack(
+    #     eventComponent(),
+    #     rx.center(
+    #         rx.box(
+    #             rx.heading("Feed", font_size="3em"),
+    #             rx.text("Welcome to Feed!"),
+    #             **styles.template_content_style,
+    #         ),
+    #     ),
+    #     rx.text("Testing what happens rn"),
+    # )
     return rx.vstack(
         rx.heading("Feed", font_size="3em"),
         rx.text("Welcome to Feed!"),
