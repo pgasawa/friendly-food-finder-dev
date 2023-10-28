@@ -10,7 +10,6 @@ class Firebase:
     def read_from_document(self, collection_name: str, document_name: str):
         doc_ref = self.db.collection(collection_name).document(document_name)
         doc_snapshot = doc_ref.get()
-        print(doc_snapshot)
         if doc_snapshot.exists:
             document_data = doc_snapshot.to_dict()
             return document_data
