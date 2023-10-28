@@ -72,7 +72,6 @@ class State(rx.State):
 
     def on_success(self, id_token: dict):
         self.id_token_json = json.dumps(id_token)
-        print(GoogleAPI.get_scheudle(self.google_auth_token))
 
     @rx.cached_var
     def google_auth_token(self) -> dict[str, str]:
@@ -92,11 +91,12 @@ class State(rx.State):
             
             # Create user if it doesn't exist
             user_doc = firestore_client.read_from_document('user', result['email'])
-            if user_doc is None:
+            if user_doc is None or "token" not in user_doc:
                 firestore_client.write_data_to_collection('user', result['email'], {
                     'name': result['name'],
                     'email': result['email'],
-                    'picture': result['picture']
+                    'picture': result['picture'],
+                    'token': GoogleAPI.get_user_token()
                 })
 
             return result
@@ -107,8 +107,6 @@ class State(rx.State):
 
     def logout(self):
         self.id_token_json = ""
-        if os.path.exists('token.json'):
-            os.remove('token.json')
 
     @rx.var
     def token_is_valid(self) -> bool:

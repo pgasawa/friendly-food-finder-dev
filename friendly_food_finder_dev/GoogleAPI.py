@@ -2,6 +2,7 @@ from __future__ import print_function
 
 from datetime import datetime, timedelta
 import os.path
+import json
 
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
@@ -9,55 +10,49 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
+from friendly_food_finder_dev.firebase import firestore_client
+
 # If modifying these scopes, delete the file token.json.
 SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']
 
-def get_scheudle(hours=2):
-    """Shows basic usage of the Google Calendar API.
-    Prints the start and name of the next 10 events on the user's calendar.
-    """
-    creds = None
-    # The file token.json stores the user's access and refresh tokens, and is
-    # created automatically when the authorization flow completes for the first
-    # time.
-    if os.path.exists('token.json'):
-        creds = Credentials.from_authorized_user_file('token.json', SCOPES)
-    # If there are no (valid) credentials available, let the user log in.
-    if not creds or not creds.valid:
-        if creds and creds.expired and creds.refresh_token:
-            creds.refresh(Request())
-        else:
-            flow = InstalledAppFlow.from_client_secrets_file(
-                'credentials.json', SCOPES)
-            creds = flow.run_local_server(port=0)
-        # Save the credentials for the next run
-        with open('token.json', 'w') as token:
-            token.write(creds.to_json())
+def get_user_token():
+    flow = InstalledAppFlow.from_client_secrets_file(
+        'credentials.json', SCOPES)
+    creds = flow.run_local_server(port=0)
+    return creds.to_json()
 
+def does_user_have_conflict(userID, startHourInterval=0, endHourInterval=2):
+    """Finds if there are any conflicting events in the next hours.
+    Looks for events anywhere between now+startHourInterval and now+endHourInterval.
+    Returns True if there is any events within the next hours.
+    Returns False if there are no events in the next hours.
+    NOTE: Full day events are also considered conflicts.
+    """
     try:
+        user_doc = firestore_client.read_from_document('user', userID)
+        print(user_doc)
+        creds = Credentials.from_authorized_user_info(json.loads(user_doc['token']), SCOPES)
+
         service = build('calendar', 'v3', credentials=creds)
 
         # Call the Calendar API
-        print(datetime.utcnow())
         now = datetime.utcnow()
-        events_result = service.events().list(calendarId='primary', timeMin=dateTimeToString(now),
-                                              timeMax=dateTimeToString(now + timedelta(hours=2)), singleEvents=True,
+        events_result = service.events().list(calendarId='primary', timeMin=dateTimeToString(now + timedelta(hours=startHourInterval)),
+                                              timeMax=dateTimeToString(now + timedelta(hours=endHourInterval)), singleEvents=True,
                                               orderBy='startTime').execute()
         events = events_result.get('items', [])
 
         if not events:
             print('No upcoming events found.')
-            return
+            return False
 
-        # Prints the start and name of the next 10 events
         for event in events:
-            if event["start"].get("dateTime"):
-                start = event["start"].get("dateTime")[:-3] + event["start"].get("dateTime")[-2:]
-                print(datetime.strptime(start, '%Y-%m-%dT%H:%M:%S%z'))
-            print(event['summary'], "lol", event["start"].get("dateTime"), "heehee", event["end"].get("dateTime"))
+            print(event['summary'], "|", event["start"], "|", event["end"])
+        return True
 
     except HttpError as error:
         print('An error occurred: %s' % error)
+        return True
 
 def stringToDateTime(str):
     if str != None:
