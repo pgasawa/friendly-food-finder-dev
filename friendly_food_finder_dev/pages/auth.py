@@ -1,4 +1,4 @@
-"""The signin page."""
+"""The auth page."""
 from friendly_food_finder_dev.templates import template
 from friendly_food_finder_dev.state import State
 
@@ -52,16 +52,16 @@ def require_google_login(page) -> rx.Component:
         )
     return _auth_wrapper
 
-@template(route="/signin", title="signin")
+@template(route="/auth", title="auth")
 @require_google_login
-def signin() -> rx.Component:
-    """The signin page.
+def auth() -> rx.Component:
+    """The auth page.
 
     Returns:
-        The UI for the signin page.
+        The UI for the auth page.
     """
     return rx.vstack(
-        rx.heading("signin", font_size="3em"),
-        rx.text("Welcome to signin!"),
+        rx.heading("auth", font_size="3em"),
+        rx.text(f"Welcome to auth, {State.tokeninfo['name']}!"),
         rx.button("Logout", on_click=State.logout)
     )

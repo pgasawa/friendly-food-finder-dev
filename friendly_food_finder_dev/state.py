@@ -19,25 +19,25 @@ class State(rx.State):
 
     The base state is used to store general vars used throughout the app.
     """
-    curr_name: str
-    curr_email: str
-
     user_addfriend_email: str
 
     def user_addfriend(self):
-        if not self.curr_email or len(self.curr_email) == 0:
-            return rx.window_alert('You are not signed in!')
         friend_doc = firestore_client.read_from_document('user', self.user_addfriend_email)
         if friend_doc is None:
             return rx.window_alert('No user exists with this email!')
         firestore_client.write_data_to_collection('friend', str(uuid.uuid1()), {
-            'requester': self.curr_email,
+            'requester': self.tokeninfo['email'],
             'requestee': self.user_addfriend_email,
         })
         friend_name = friend_doc['name']
         return rx.window_alert(f'You are now friends with {friend_name}!')
 
-    def user_showallfriends():
+    def user_showallfriends(self):
+        # friend_docs = firestore_client.query_by_condition('friend', 'requester', '==', self.tokeninfo['email'])
+        # user_docs = []
+        # for friend_doc in friend_docs:
+        #     firestore_client.query_by_condition
+        #     # user_docs.append(friend_doc.to_dict())
         raise NotImplementedError
 
     def user_showavailablefriends():
@@ -75,11 +75,13 @@ class State(rx.State):
     @rx.cached_var
     def tokeninfo(self) -> dict[str, str]:
         try:
-            return verify_oauth2_token(
+            result = verify_oauth2_token(
                 json.loads(self.id_token_json)["credential"],
                 requests.Request(),
                 CLIENT_ID,
             )
+            print('tokeninfo:', result)
+            return result
         except Exception as exc:
             if self.id_token_json:
                 print(f"Error verifying token: {exc}")
