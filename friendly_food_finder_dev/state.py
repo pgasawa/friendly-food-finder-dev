@@ -1,14 +1,15 @@
 """Base state for the app."""
 
 import reflex as rx
-
+from friendly_food_finder_dev import Firebase
 
 class State(rx.State):
     """Base state for the app.
 
     The base state is used to store general vars used throughout the app.
     """
-
+    firebase_client = Firebase()
+    
     def user_create():
         raise NotImplementedError
 
