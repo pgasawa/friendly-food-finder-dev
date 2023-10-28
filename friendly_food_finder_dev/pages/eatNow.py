@@ -7,6 +7,10 @@ import reflex as rx
 import requests
 import os
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
 @template(route="/eatNow", title="Eat Now")
 @require_google_login
 def eatNow() -> rx.Component:
@@ -38,7 +42,7 @@ def possible_restaurants_by_loc(user, friends):
     return viable_list
 
 def get_nearby_restaurants(username):
-    api_key = os.environ['YELP_API_KEY']
+    api_key = os.environ.get('YELP_API_KEY')
 
     # TODO: get lat long by username
     latitude, longitude = 37.86531319642755, -122.2695501637612
