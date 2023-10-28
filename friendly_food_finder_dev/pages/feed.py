@@ -1,6 +1,5 @@
 """The feed page."""
 from friendly_food_finder_dev.templates import template
-from friendly_food_finder_dev import styles
 
 import reflex as rx
 from friendly_food_finder_dev import Firebase
@@ -25,7 +24,9 @@ def feed() -> rx.Component:
     #     rx.text("Testing what happens rn"),
     # )
     return rx.vstack(
-        rx.text("Testing what happens rn")
+        rx.heading("Feed", font_size="3em"),
+        rx.text("Welcome to Feed!"),
+        rx.text("Testing what happens rn"),
     )
 
 # def eventComponent() -> rx.Component:

@@ -17,7 +17,7 @@ def footer_item(text: str, icon: str, url: str) -> rx.Component:
         rx.Component: The sidebar item component.
     """
     # Whether the item is active.
-    active = (State.router.page.path == f"/{text.lower()}") | (
+    active = (State.router.page.path.lower() == f"/{text.replace(' ', '').lower()}") | (
         (State.router.page.path == "/") & text == "Home"
     )
 
@@ -78,9 +78,10 @@ def footer() -> rx.Component:
         rx.spacer(),
         display=["none", "none", "block"],
         min_width=styles.sidebar_width,
-        width="95%",
-        height="0em",
-        position="relative",
+        width="100%",
+        height="5em",
+        position="fixed",
         bottom="0px",
         border_top=styles.border,
+        background_color="#D2F0FC",
     )

@@ -110,9 +110,10 @@ def template(
                     menu_button(),
                     align_items="flex-start",
                     transition="left 0.5s, width 0.5s",
-                    position="relative",
+                    position="sticky",
                 ),
                 footer(),
+                padding_bottom="5em",
             ) 
 
         return templated_page
