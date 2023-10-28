@@ -13,7 +13,7 @@ def scheduleEat() -> rx.Component:
     """
     return rx.vstack(
         rx.heading("Week of October 30th — November 3rd!", font_size="3em"),
-        rx.text("Welcome to scheduling ahead ur eats!"),
+        rx.text("Let's plan the week."),
         rx.hstack(
             rx.card(
                 rx.vstack(
