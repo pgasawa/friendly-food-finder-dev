@@ -33,6 +33,20 @@ Restaurants:
 Response:
 """
 
+def call_together_ai(prompt: str) -> str:
+    endpoint = 'https://api.together.xyz/inference'
+    TOGETHER_API_KEY = 'a98fedd4c4e8d8fb4f41445322b8e766e0f22b96346cde3c56d8b88f8ea5e7ba'
+
+    res = requests.post(endpoint, json={
+        'model': 'togethercomputer/llama-2-13b-chat',
+        'prompt': prompt
+    }, headers={
+        'Authorization': f'Bearer {TOGETHER_API_KEY}',
+        'User-Agent': 'Calhacks23'
+    })
+
+    return res.json()['choices'][0]['text']
+
 def recommend_restaurants(users, restaurants, top_k=3):
     # 1. Prompt engineering
     friends_template = ""
@@ -73,19 +87,6 @@ def recommend_restaurants(users, restaurants, top_k=3):
     formatted_prompt = prompt.format(str(top_k), friends_template, restaurants_template)
     
     # 2. Call together.ai endpoint
-    endpoint = 'https://api.together.xyz/inference'
-    TOGETHER_API_KEY = 'a98fedd4c4e8d8fb4f41445322b8e766e0f22b96346cde3c56d8b88f8ea5e7ba'
-
-    res = requests.post(endpoint, json={
-        'model': 'togethercomputer/llama-2-13b-chat',
-        'prompt': formatted_prompt
-    }, headers={
-        'Authorization': f'Bearer {TOGETHER_API_KEY}',
-        'User-Agent': 'Calhacks23'
-    })
-
-    restaurant_names_filtered = set(res.json()['choices'][0]['text'].split(';'))
-
-    # 3. Return restaurants
+    restaurant_names_filtered = set(call_together_ai(formatted_prompt).split(';'))
     restaurants_filtered = [r for r in restaurants if r['name'] in restaurant_names_filtered]
     return restaurants_filtered

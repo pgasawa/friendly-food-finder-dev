@@ -60,15 +60,23 @@ def footer() -> rx.Component:
     # Get all the decorated pages and add them to the footer.
     from reflex.page import get_decorated_pages
 
+    images = {
+        '/eatNow': '/eat_now.png',
+        '/feed': '/feed.png',
+        '/friends': '/friends.png',
+        '/scheduleEat': '/schedule_eat.png',
+        '/settings': '/settings.png',
+    }
+
     return rx.box(
         rx.hstack(
             *[
                 footer_item(
                     text=page.get("title", page["route"].strip("/").capitalize()),
-                    icon=page.get("image", "/friendly-food.png"),
+                    icon=page.get("image", images[page["route"]]),
                     url=page["route"],
                 )
-                for page in get_decorated_pages() if page.get("title", page["route"].strip("/").capitalize()) not in ["Auth", "Settings", "Home"]
+                for page in get_decorated_pages() if page.get("title", page["route"].strip("/").capitalize()) not in ["Auth", "Home"]
             ],
             width="100%",
             overflow_x="auto",
