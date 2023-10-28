@@ -1,8 +1,8 @@
 *.db
 *.py[cod]
+.env
 .web
 __pycache__/
-venv/*
-firebase-key.json
-.env
 credentials.json
+firebase-key.json
+venv/*
