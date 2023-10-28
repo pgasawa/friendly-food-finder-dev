@@ -23,6 +23,9 @@ def eatNow() -> rx.Component:
     Returns:
         The UI for the eatNow page.
     """
+    nearby = get_nearby_restaurants(1)
+    if len(nearby) < 1:
+        return rx.box()
     return rx.vstack(
         rx.heading("Eat Now!", font_size="3em"),
         rx.text("Time to spontaneously eat!"),
