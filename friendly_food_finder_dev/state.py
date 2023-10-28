@@ -23,6 +23,49 @@ class State(rx.State):
     The base state is used to store general vars used throughout the app.
     """
     user_add_friend_email: str
+    update_vegetarian: bool = False
+    update_vegan: bool = False
+    update_south_asian: bool = False
+    update_east_asian: bool = False
+    update_american: bool = False
+    update_mexican: bool = False
+    update_mediterranean: bool = False
+    update_italian: bool = False
+
+    @rx.var
+    def user_doc(self) -> dict[str, bool]:
+        if self.tokeninfo is None or len(self.tokeninfo.keys()) == 0:
+            return {}
+        user_doc = firestore_client.read_from_document('user', self.tokeninfo['email'])
+        if user_doc is None:
+            user_doc = {
+                'name': self.tokeninfo['name'],
+                'email': self.tokeninfo['email'],
+                'picture': self.tokeninfo['picture'],
+                'token': GoogleAPI.get_user_token(),
+                'vegetarian': False,
+                'vegan': False,
+                'south_asian': False,
+                'east_asian': False,
+                'american': False,
+                'mexican': False,
+                'mediterranean': False,
+                'italian': False
+            }
+            firestore_client.write_data_to_collection('user', self.tokeninfo['email'], user_doc)
+
+        print('user_doc', user_doc)
+        
+        self.set_update_vegetarian(user_doc['vegetarian'])
+        self.set_update_vegan(user_doc['vegan'])
+        self.set_update_south_asian(user_doc['south_asian'])
+        self.set_update_east_asian(user_doc['east_asian'])
+        self.set_update_american(user_doc['american'])
+        self.set_update_mexican(user_doc['mexican'])
+        self.set_update_mediterranean(user_doc['mediterranean'])
+        self.set_update_italian(user_doc['italian'])
+
+        return user_doc
 
     lowChecked: bool = False
     midChecked: bool = False
@@ -94,8 +137,20 @@ class State(rx.State):
         for friend_doc in friend_docs:
             user_doc = firestore_client.read_from_document('user', friend_doc['requestee'])
             user_docs.append(user_doc)
-        print(user_docs)
         return user_docs
+    
+    def update_profile(self, prefs: dict[str, bool]):
+        new_doc = {
+            'vegetarian': prefs['vegetarian'],
+            'vegan': prefs['vegan'],
+            'south_asian': prefs['south_asian'],
+            'east_asian': prefs['east_asian'],
+            'american': prefs['american'],
+            'mexican': prefs['mexican'],
+            'mediterranean': prefs['mediterranean'],
+            'italian': prefs['italian']
+        }
+        firestore_client.update_data_in_collection('user', self.tokeninfo['email'], new_doc)
 
     def user_show_available_friends():
         raise NotImplementedError
@@ -141,16 +196,6 @@ class State(rx.State):
                 requests.Request(),
                 CLIENT_ID,
             )
-            
-            # Create user if it doesn't exist
-            user_doc = firestore_client.read_from_document('user', result['email'])
-            if user_doc is None or "token" not in user_doc:
-                firestore_client.write_data_to_collection('user', result['email'], {
-                    'name': result['name'],
-                    'email': result['email'],
-                    'picture': result['picture'],
-                    'token': GoogleAPI.get_user_token()
-                })
 
             return result
         except Exception as exc:
