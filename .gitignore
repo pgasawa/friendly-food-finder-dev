@@ -5,3 +5,4 @@ __pycache__/
 venv/*
 firebase-key.json
 .env
+credentials.json
