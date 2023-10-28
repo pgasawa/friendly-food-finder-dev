@@ -1,4 +1,4 @@
-"""The auth page."""
+# """The auth page."""
 from friendly_food_finder_dev.templates import template
 from friendly_food_finder_dev.state import State
 
@@ -64,4 +64,4 @@ def auth() -> rx.Component:
         rx.heading("Auth", font_size="3em"),
         rx.text(f"Welcome to auth, {State.tokeninfo['name']}!"),
         rx.button("Logout", on_click=State.logout)
-    )
+    ) 

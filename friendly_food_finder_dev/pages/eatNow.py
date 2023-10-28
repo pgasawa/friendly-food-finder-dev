@@ -128,45 +128,46 @@ def possible_meals():
     return selected_suggestions
 
 def get_nearby_restaurants(user, radius=600):
-    api_key = os.environ.get('YELP_API_KEY')
+    return []
+    # api_key = os.environ.get('YELP_API_KEY')
 
-    # TODO: get lat long by username
-    latitude, longitude = 37.86531319642755, -122.2695501637612
+    # # TODO: get lat long by username
+    # latitude, longitude = 37.86531319642755, -122.2695501637612
 
-    # Set the search parameters
-    params = {
-        'latitude': latitude,
-        'longitude': longitude,
-        'categories': 'restaurants',
-        'radius': radius,  # Search radius in meters
-    }
+    # # Set the search parameters
+    # params = {
+    #     'latitude': latitude,
+    #     'longitude': longitude,
+    #     'categories': 'restaurants',
+    #     'radius': radius,  # Search radius in meters
+    # }
 
-    url = 'https://api.yelp.com/v3/businesses/search'
+    # url = 'https://api.yelp.com/v3/businesses/search'
 
-    headers = {
-        'Authorization': f'Bearer {api_key}',
-    }
+    # headers = {
+    #     'Authorization': f'Bearer {api_key}',
+    # }
 
-    response = requests.get(url, headers=headers, params=params)
+    # response = requests.get(url, headers=headers, params=params)
 
-    is_vegetarian = user.get('vegetarian')
-    is_vegan = user.get('vegan')
+    # is_vegetarian = user.get('vegetarian')
+    # is_vegan = user.get('vegan')
 
-    restaurants = []
-    if response.status_code == 200:
-        data = response.json()
-        for business in data.get('businesses', []):
-            if is_vegetarian or is_vegan:
-                if is_vegan:
-                    if business.get('attributes') and business['attributes'].get('liked_by_vegans'):
-                        restaurants.append(business)
-                else:
-                    if business.get('attributes') and business['attributes'].get('liked_by_vegetarians'):
-                        restaurants.append(business)
-            else:
-                restaurants.append(business)
-            restaurants.append(business)
-    else:
-        print(f"Error: {response.status_code} - {response.text}")
+    # restaurants = []
+    # if response.status_code == 200:
+    #     data = response.json()
+    #     for business in data.get('businesses', []):
+    #         if is_vegetarian or is_vegan:
+    #             if is_vegan:
+    #                 if business.get('attributes') and business['attributes'].get('liked_by_vegans'):
+    #                     restaurants.append(business)
+    #             else:
+    #                 if business.get('attributes') and business['attributes'].get('liked_by_vegetarians'):
+    #                     restaurants.append(business)
+    #         else:
+    #             restaurants.append(business)
+    #         restaurants.append(business)
+    # else:
+    #     print(f"Error: {response.status_code} - {response.text}")
 
-    return restaurants
+    # return restaurants

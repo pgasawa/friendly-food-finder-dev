@@ -43,7 +43,8 @@ def menu_button() -> rx.Component:
                             width="100%",
                         )
                     )
-                    for page in get_decorated_pages()
+                    for page in get_decorated_pages() if 
+                    page.get("title", page["route"].strip("/").capitalize()) not in ["Home", "Eat Now", "Feed", "Friends", "Schedule Eat", "Auth"]
                 ]
             ),
         ),
