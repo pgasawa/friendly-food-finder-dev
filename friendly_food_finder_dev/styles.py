@@ -7,13 +7,13 @@ box_shadow = "0px 0px 0px 1px rgba(84, 82, 95, 0.14)"
 border = "1px solid #F4F3F6"
 text_color = "black"
 accent_text_color = "#1A1060"
-accent_color = "#F5EFFE"
+accent_color = "#FAC4A2"
 hover_accent_color = {"_hover": {"color": accent_color}}
 hover_accent_bg = {"_hover": {"bg": accent_color}}
 content_width_vw = "90vw"
 sidebar_width = "20em"
 
-template_page_style = {"padding_top": "5em", "padding_x": ["auto", "2em"]}
+template_page_style = {"padding_top": "2.5em", "padding_bottom": "5em", "padding_x": ["auto", "2em"]}
 
 template_content_style = {
     "width": "100%",
