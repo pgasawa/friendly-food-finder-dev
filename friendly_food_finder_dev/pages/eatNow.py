@@ -10,6 +10,10 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
 @template(route="/eatNow", title="Eat Now")
 @require_google_login
 def eatNow() -> rx.Component:

@@ -6,11 +6,14 @@ import reflex as rx
 from friendly_food_finder_dev.firebase import firestore_client
 from google.cloud.firestore import ArrayUnion, ArrayRemove
 import os
+import os.path
 import json
 import time
 
 from google.auth.transport import requests
 from google.oauth2.id_token import verify_oauth2_token
+
+from . import GoogleAPI
 
 CLIENT_ID = "419615612188-fupdhp748n09ba2ibt0qi9633lk1pkhp.apps.googleusercontent.com"
 
@@ -20,6 +23,49 @@ class State(rx.State):
     The base state is used to store general vars used throughout the app.
     """
     user_add_friend_email: str
+    update_vegetarian: bool = False
+    update_vegan: bool = False
+    update_south_asian: bool = False
+    update_east_asian: bool = False
+    update_american: bool = False
+    update_mexican: bool = False
+    update_mediterranean: bool = False
+    update_italian: bool = False
+
+    @rx.var
+    def user_doc(self) -> dict[str, bool]:
+        if self.tokeninfo is None or len(self.tokeninfo.keys()) == 0:
+            return {}
+        user_doc = firestore_client.read_from_document('user', self.tokeninfo['email'])
+        if user_doc is None:
+            user_doc = {
+                'name': self.tokeninfo['name'],
+                'email': self.tokeninfo['email'],
+                'picture': self.tokeninfo['picture'],
+                'token': GoogleAPI.get_user_token(),
+                'vegetarian': False,
+                'vegan': False,
+                'south_asian': False,
+                'east_asian': False,
+                'american': False,
+                'mexican': False,
+                'mediterranean': False,
+                'italian': False
+            }
+            firestore_client.write_data_to_collection('user', self.tokeninfo['email'], user_doc)
+
+        print('user_doc', user_doc)
+        
+        self.set_update_vegetarian(user_doc['vegetarian'])
+        self.set_update_vegan(user_doc['vegan'])
+        self.set_update_south_asian(user_doc['south_asian'])
+        self.set_update_east_asian(user_doc['east_asian'])
+        self.set_update_american(user_doc['american'])
+        self.set_update_mexican(user_doc['mexican'])
+        self.set_update_mediterranean(user_doc['mediterranean'])
+        self.set_update_italian(user_doc['italian'])
+
+        return user_doc
 
     def user_add_friend(self):
         friend_doc = firestore_client.read_from_document('user', self.user_add_friend_email)
@@ -41,7 +87,22 @@ class State(rx.State):
         for friend_doc in friend_docs:
             user_doc = firestore_client.read_from_document('user', friend_doc['requestee'])
             user_docs.append(user_doc)
+        print(user_docs)
         return user_docs
+    
+    def update_profile(self, prefs: dict[str, bool]):
+        new_doc = {
+            'vegetarian': prefs['vegetarian'],
+            'vegan': prefs['vegan'],
+            'south_asian': prefs['south_asian'],
+            'east_asian': prefs['east_asian'],
+            'american': prefs['american'],
+            'mexican': prefs['mexican'],
+            'mediterranean': prefs['mediterranean'],
+            'italian': prefs['italian']
+        }
+        firestore_client.update_data_in_collection('user', self.tokeninfo['email'], new_doc)
+
 
     def update_friend_closeness(self, option, friend_email):
         user_doc_name = self.tokeninfo["email"]
@@ -86,8 +147,12 @@ class State(rx.State):
     def on_success(self, id_token: dict):
         self.id_token_json = json.dumps(id_token)
 
-    def get_google_token(self):
-        return self.id_token_json
+    @rx.cached_var
+    def google_auth_token(self) -> dict[str, str]:
+        try:
+            return json.loads(self.id_token_json)
+        except Exception as e:
+            return {}
 
     @rx.cached_var
     def tokeninfo(self) -> dict[str, str]:
