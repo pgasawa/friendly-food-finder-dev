@@ -30,7 +30,6 @@ class State(rx.State):
             'requestee': self.user_addfriend_email,
         })
         friend_name = friend_doc['name']
-        return rx.window_alert(f'You are now friends with {friend_name}!')
 
     @rx.var
     def all_friends(self) -> List[dict[str, str]]:
