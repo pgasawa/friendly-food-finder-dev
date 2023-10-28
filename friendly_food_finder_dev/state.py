@@ -117,10 +117,3 @@ class State(rx.State):
             )
         except Exception:
             return False
-
-    @rx.cached_var
-    def protected_content(self) -> str:
-        if self.token_is_valid:
-            return f"This content can only be viewed by a logged in User. Nice to see you {self.tokeninfo['name']}"
-        return "Not logged in."
-
