@@ -17,6 +17,13 @@ class Firebase:
         else:
             # Document does not exist
             return None
+        
+    def query_by_condition(self, collection_name: str, field_name: str, operator: str, value: str):
+        docs = self.db.collection(collection_name).where(field_name, operator, value).stream()
+        result = []
+        for doc in docs:
+            result.append(doc.to_dict())
+        return result
 
     def write_data_to_collection(self, collection_name: str, document_name: str, data):
         # print(collection_name, document_name, data)

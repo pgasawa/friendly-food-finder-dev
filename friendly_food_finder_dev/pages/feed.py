@@ -1,5 +1,6 @@
 """The feed page."""
 from friendly_food_finder_dev.templates import template
+from friendly_food_finder_dev.pages.auth import require_google_login
 
 import reflex as rx
 import calendar
@@ -8,6 +9,7 @@ from friendly_food_finder_dev.firebase import firestore_client
 from friendly_food_finder_dev.state import State
 
 @template(route="/feed", title="Feed")
+@require_google_login
 def feed() -> rx.Component:
     """The feed page.
 
