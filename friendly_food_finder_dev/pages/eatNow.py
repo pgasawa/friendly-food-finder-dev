@@ -6,9 +6,6 @@ from friendly_food_finder_dev.state import State
 import reflex as rx
 import requests
 import os
-from dotenv import load_dotenv
-
-load_dotenv()
 
 from dotenv import load_dotenv
 
@@ -23,6 +20,8 @@ def eatNow() -> rx.Component:
         The UI for the eatNow page.
     """
     nearby = get_nearby_restaurants(1)
+    if len(nearby) < 1:
+        return rx.box()
     return rx.vstack(
         rx.heading("Eat Now!", font_size="3em"),
         rx.text("Time to spontaneously eat!"),

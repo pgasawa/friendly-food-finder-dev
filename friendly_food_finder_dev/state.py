@@ -50,7 +50,8 @@ class State(rx.State):
                 'american': False,
                 'mexican': False,
                 'mediterranean': False,
-                'italian': False
+                'italian': False,
+                'friends': []
             }
             firestore_client.write_data_to_collection('user', self.tokeninfo['email'], user_doc)
 
@@ -78,7 +79,7 @@ class State(rx.State):
         friend_name = friend_doc['name']
         user_doc_name = self.tokeninfo["email"]
         user_docref = firestore_client.db.collection("user").document(user_doc_name)
-        user_docref.update({"friends": ArrayUnion([{self.user_add_friend_email: []}])})
+        user_docref.update({"friends": ArrayUnion([{self.user_add_friend_email: {'closeness': "Hella tight"}}])})
 
     @rx.var
     def all_friends(self) -> List[dict[str, str]]:
@@ -107,16 +108,11 @@ class State(rx.State):
     def update_friend_closeness(self, option, friend_email):
         user_doc_name = self.tokeninfo["email"]
         friend_data = firestore_client.read_from_document("user", user_doc_name)["friends"]
-        print("HELLO IM FREAKING HERE",friend_email, friend_data)
-        for friend in friend_data:
-            if f
-        if len(friend_data[friend_email]) > 1:
-            friend_data[friend_email][0] = [option]
-        else:
-            friend_data[friend_email].append(option)
+        for i in range(len(friend_data)):
+            if friend_email in friend_data[i]:
+                friend_data[i][friend_email] = {"closeness": option}
         user_docref = firestore_client.db.collection("user").document(user_doc_name)
-        user_docref.update({"friends": ArrayRemove([friend_email])})
-        firestore_client.write_data_to_collection("user", user_doc_name, friend_data)
+        user_docref.update({"friends": friend_data})
 
     def user_show_available_friends():
         raise NotImplementedError
@@ -162,17 +158,6 @@ class State(rx.State):
                 requests.Request(),
                 CLIENT_ID,
             )
-            
-            # Create user if it doesn't exist
-            user_doc = firestore_client.read_from_document('user', result['email'])
-            if user_doc is None:
-                firestore_client.write_data_to_collection('user', result['email'], {
-                    'name': result['name'],
-                    'email': result['email'],
-                    'picture': result['picture'],
-                    'friends': []
-                })
-
             return result
         except Exception as exc:
             if self.id_token_json:

@@ -26,9 +26,6 @@ def friends() -> rx.Component:
 def friendComponent(friend):
     print(friend)
     options = ["Hella tight", "Kinda close", "Lowkey chill"]
-    #  = friend["closeness"] if friend.contains("closeness") else ""
-    closeness_selection = "Hella tight"
-
 
     return rx.hstack(
         rx.image(
@@ -36,17 +33,12 @@ def friendComponent(friend):
         ),
         rx.vstack(
             rx.text(friend['name']),
-            rx.vstack(
-            rx.badge(
-                closeness_selection, color_scheme="green"
-            ),
             rx.select(
                 options,
                 on_change=lambda value: State.update_friend_closeness(
                     value, friend["email"]
                 ),
             ),
-        )
         )
         
     )
