@@ -53,8 +53,6 @@ class State(rx.State):
                 'italian': False
             }
             firestore_client.write_data_to_collection('user', self.tokeninfo['email'], user_doc)
-
-        print('user_doc', user_doc)
         
         self.set_update_vegetarian(user_doc['vegetarian'])
         self.set_update_vegan(user_doc['vegan'])

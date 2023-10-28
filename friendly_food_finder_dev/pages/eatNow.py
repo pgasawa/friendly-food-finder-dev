@@ -44,11 +44,15 @@ def eatNow() -> rx.Component:
                 rx.card(
                     rx.vstack(
                         rx.hstack(
-                            rx.text(meal[1].get("name")),
+                            rx.link(
+                                rx.text(meal[1].get("name")),
+                                href=meal[1].get("url"),
+                                color="rgb(2,133,194)",
+                            ),
                             rx.text(meal[1].get("price")),
                         ),
                         rx.hstack(
-                            rx.image(src=meal[1].get("image_url"), width="auto", height="auto"),
+                            rx.image(src=meal[1].get("image_url"), width="300px", height="300px"),
                         )
                     ),
                     header=rx.heading(meal[0]),
@@ -78,7 +82,7 @@ def haversine(lat1, lon1, lat2, lon2):
     return distance
 
 def get_free_friends():
-    friend_emails = [x for x in firestore_client.read_from_document('user', 'ayushibatwara@gmail.com').get('friends')[0]]
+    friend_emails = [list(x.keys())[0] for x in firestore_client.read_from_document('user', 'ayushibatwara@gmail.com').get('friends')]
     friends = [firestore_client.read_from_document('user', friend_email) for friend_email in friend_emails]
     friends = [friend for friend in friends if not does_user_have_conflict(friend['email'], 0, 1)]
     friends = [friend for friend in friends if haversine(37.86531319642755, -122.2695501637612, friend['latitude'], friend['longitude']) < 1000]
@@ -109,6 +113,7 @@ def possible_meals():
         intersection = [dict1 for dict1 in viable_list for dict2 in get_nearby_restaurants(friend) if dict1.get("name") == dict2.get("name")]
         if intersection:
             possible_meals[friend.get('name')] = intersection
+    print("TIGER", list(possible_meals.keys()))
     print("HELLO", possible_meals)
     keys = list(possible_meals.keys())
     random.shuffle(keys)
@@ -153,10 +158,10 @@ def get_nearby_restaurants(user, radius=600):
         for business in data.get('businesses', []):
             if is_vegetarian or is_vegan:
                 if is_vegan:
-                    if business.get('attributes').get('liked_by_vegans'):
+                    if business.get('attributes') and business['attributes'].get('liked_by_vegans'):
                         restaurants.append(business)
                 else:
-                    if business.get('attributes').get('liked_by_vegetarians'):
+                    if business.get('attributes') and business['attributes'].get('liked_by_vegetarians'):
                         restaurants.append(business)
             else:
                 restaurants.append(business)

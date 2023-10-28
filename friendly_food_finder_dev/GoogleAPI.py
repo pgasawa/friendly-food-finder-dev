@@ -30,7 +30,6 @@ def does_user_have_conflict(userID, startHourInterval=0, endHourInterval=2):
     """
     try:
         user_doc = firestore_client.read_from_document('user', userID)
-        print(user_doc)
         creds = Credentials.from_authorized_user_info(json.loads(user_doc['token']), SCOPES)
 
         service = build('calendar', 'v3', credentials=creds)
