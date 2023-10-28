@@ -22,31 +22,11 @@ class State(rx.State):
     curr_name: str
     curr_email: str
 
-    user_create_name: str
-    user_create_email: str
-    user_create_password: str
-    user_create_budget: float
-
     user_signin_email: str
     user_signin_password: str
 
     user_addfriend_email: str
-
-    def user_create(self):
-        firestore_client.write_data_to_collection('user', self.user_create_email, {
-            'name': self.user_create_name,
-            'email': self.user_create_email,
-            'password': self.user_create_password,
-            'budget': self.user_create_budget,
-            'dietary_prefs': ['Vegan'],
-            'cuisine_prefs': ['Your mom'],
-            'location_longitude': 37.784161,
-            'location_latitude': -122.403549
-        })
-        self.curr_name = self.user_create_name
-        self.curr_email = self.user_create_email
-        return rx.window_alert('You signed up!')
-
+    
     def user_signin(self):
         doc_data = firestore_client.read_from_document('user', self.user_signin_email)
         if doc_data is None:
