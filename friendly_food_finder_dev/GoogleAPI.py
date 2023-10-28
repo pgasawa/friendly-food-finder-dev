@@ -3,6 +3,7 @@ from __future__ import print_function
 from datetime import datetime, timedelta
 import os.path
 import json
+from typing import List
 
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
@@ -58,6 +59,28 @@ def does_user_have_conflict(userID, startHourInterval=0, endHourInterval=2):
     except HttpError as error:
         print('An error occurred: %s' % error)
         return True
+
+def send_cal_invite(organizerEmail: str, attendeeEmails: List[str], startTime: str, location: str):
+    user_doc = firestore_client.read_from_document('user', organizerEmail)
+    creds = Credentials.from_authorized_user_info(json.loads(user_doc['token']), SCOPES)
+    service = build('calendar', 'v3', credentials=creds)
+    event = {
+        'summary': 'Lunch! ',
+        'location': location,
+        'description': 'Time to eat.',
+        'start': {
+            'dateTime': startTime,
+            'timeZone': 'America/Los_Angeles',
+        },
+        'end': {
+            'dateTime': startTime + timedelta(hours=1),
+            'timeZone': 'America/Los_Angeles',
+        },
+        'attendees': [
+            {'email': attendeeEmail} for attendeeEmail in attendeeEmails
+        ],
+    }
+    event = service.events().insert(calendarId='primary', body=event).execute()
 
 def stringToDateTime(str):
     if str != None:
