@@ -15,8 +15,6 @@ import reflex as rx
 
 budget_options: List[str] = ['$', '$$', '$$$', '$$$$']
 
-budget_options: List[str] = ['$', '$$', '$$$', '$$$$']
-
 from ..react_oauth_google import GoogleOAuthProvider, GoogleLogin
 
 CLIENT_ID = "419615612188-fupdhp748n09ba2ibt0qi9633lk1pkhp.apps.googleusercontent.com"
