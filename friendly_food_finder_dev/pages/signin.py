@@ -1,5 +1,6 @@
 """The signin page."""
 from friendly_food_finder_dev.templates import template
+from friendly_food_finder_dev.state import State
 
 import functools
 import os

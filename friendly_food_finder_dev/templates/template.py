@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from friendly_food_finder_dev import styles
-from friendly_food_finder_dev.components.sidebar import sidebar
+from friendly_food_finder_dev.components.footer import footer
 from typing import Callable
 
 import reflex as rx
@@ -100,21 +100,21 @@ def template(
             on_load=on_load,
         )
         def templated_page():
-            return rx.hstack(
-                sidebar(),
-                rx.box(
+            return rx.vstack(
+                rx.hstack(
                     rx.box(
                         page_content(),
-                        **styles.template_content_style,
+                        **styles.template_page_style,
                     ),
-                    **styles.template_page_style,
+                    rx.spacer(),
+                    menu_button(),
+                    align_items="flex-start",
+                    transition="left 0.5s, width 0.5s",
+                    position="sticky",
                 ),
-                rx.spacer(),
-                menu_button(),
-                align_items="flex-start",
-                transition="left 0.5s, width 0.5s",
-                position="relative",
-            )
+                footer(),
+                padding_bottom="5em",
+            ) 
 
         return templated_page
 
