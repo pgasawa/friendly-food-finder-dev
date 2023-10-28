@@ -4,7 +4,7 @@ import uuid
 from typing import List
 import reflex as rx
 from friendly_food_finder_dev.firebase import firestore_client
-
+from google.cloud.firestore import ArrayUnion, ArrayRemove
 import os
 import json
 import time
@@ -30,6 +30,9 @@ class State(rx.State):
             'requestee': self.user_add_friend_email,
         })
         friend_name = friend_doc['name']
+        user_doc_name = self.tokeninfo["email"]
+        user_docref = firestore_client.db.collection("user").document(user_doc_name)
+        user_docref.update({"friends": ArrayUnion([{self.user_add_friend_email: []}])})
 
     @rx.var
     def all_friends(self) -> List[dict[str, str]]:
@@ -38,8 +41,21 @@ class State(rx.State):
         for friend_doc in friend_docs:
             user_doc = firestore_client.read_from_document('user', friend_doc['requestee'])
             user_docs.append(user_doc)
-        print(user_docs)
         return user_docs
+
+    def update_friend_closeness(self, option, friend_email):
+        user_doc_name = self.tokeninfo["email"]
+        friend_data = firestore_client.read_from_document("user", user_doc_name)["friends"]
+        print("HELLO IM FREAKING HERE",friend_email, friend_data)
+        for friend in friend_data:
+            if f
+        if len(friend_data[friend_email]) > 1:
+            friend_data[friend_email][0] = [option]
+        else:
+            friend_data[friend_email].append(option)
+        user_docref = firestore_client.db.collection("user").document(user_doc_name)
+        user_docref.update({"friends": ArrayRemove([friend_email])})
+        firestore_client.write_data_to_collection("user", user_doc_name, friend_data)
 
     def user_show_available_friends():
         raise NotImplementedError
@@ -88,7 +104,8 @@ class State(rx.State):
                 firestore_client.write_data_to_collection('user', result['email'], {
                     'name': result['name'],
                     'email': result['email'],
-                    'picture': result['picture']
+                    'picture': result['picture'],
+                    'friends': []
                 })
 
             return result
@@ -115,4 +132,5 @@ class State(rx.State):
         if self.token_is_valid:
             return f"This content can only be viewed by a logged in User. Nice to see you {self.tokeninfo['name']}"
         return "Not logged in."
-
+    
+   
