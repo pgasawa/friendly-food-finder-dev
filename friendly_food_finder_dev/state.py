@@ -10,10 +10,16 @@ class State(rx.State):
 
     The base state is used to store general vars used throughout the app.
     """
+    curr_name: str
+    curr_email: str
+
     user_create_name: str
     user_create_email: str
     user_create_password: str
     user_create_budget: float
+
+    user_signin_email: str
+    user_signin_password: str
 
     def user_create(self):
         with rx.session() as session:
@@ -27,10 +33,20 @@ class State(rx.State):
                 'location_longitude': 37.784161,
                 'location_latitude': -122.403549
             })
+            self.curr_name = self.user_create_name
+            self.curr_email = self.user_create_email
             return rx.window_alert('You signed up!')
 
-    def user_signin():
-        raise NotImplementedError
+    def user_signin(self):
+        with rx.session() as session:
+            doc_data = firestore_client.read_from_document('user', self.user_signin_email)
+            if doc_data is None:
+                return rx.window_alert('The email does not exist')
+            if doc_data['password'] != self.user_signin_password:
+                return rx.window_alert('The password is incorrect')
+            self.curr_email = self.user_signin_email
+            self.curr_name = doc_data['name']
+            return rx.window_alert(f'You signed in, {self.curr_name}!')
 
     def user_addfriend():
         raise NotImplementedError
