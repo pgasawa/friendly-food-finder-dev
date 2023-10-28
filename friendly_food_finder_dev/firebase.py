@@ -31,6 +31,10 @@ class Firebase:
         doc_ref.set(dict(data), merge=True)
         # print(f"Document added: {doc_ref}")
 
+    def update_data_in_collection(self, collection_name: str, document_name: str, data):
+        doc_ref = self.db.collection(collection_name).document(document_name)
+        doc_ref.update(data)
+
     def delete_data_from_collection(self, collection_name, document_id):
         try:
             doc_ref = self.db.collection(collection_name).document(document_id)
