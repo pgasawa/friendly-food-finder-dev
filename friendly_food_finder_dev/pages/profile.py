@@ -1,10 +1,13 @@
 """The profile page."""
+from typing import List
 from friendly_food_finder_dev.templates import template
 from friendly_food_finder_dev.state import State
 from friendly_food_finder_dev.pages.auth import require_google_login
 from friendly_food_finder_dev.firebase import firestore_client
 
 import reflex as rx
+
+budget_options: List[str] = ['$', '$$', '$$$', '$$$$']
 
 @template(route="/profile", title="Profile")
 @require_google_login
@@ -37,6 +40,11 @@ def profile() -> rx.Component:
                         rx.switch('Mediterranean', is_checked=State.update_mediterranean, on_change=State.set_update_mediterranean),
                         rx.switch('Italian', is_checked=State.update_italian, on_change=State.set_update_italian),
                     )),
+                    ("Budget per meal", rx.select(
+                        budget_options,
+                        value=State.update_budget,
+                        on_change=State.set_update_budget
+                    ))
                 ],
             )
         ),
@@ -48,6 +56,7 @@ def profile() -> rx.Component:
             'american': State.update_american,
             'mexican': State.update_mexican,
             'mediterranean': State.update_mediterranean,
-            'italian': State.update_italian
+            'italian': State.update_italian,
+            'budget': State.update_budget
         })),
     )

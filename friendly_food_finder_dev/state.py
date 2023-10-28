@@ -31,6 +31,7 @@ class State(rx.State):
     update_mexican: bool = False
     update_mediterranean: bool = False
     update_italian: bool = False
+    update_budget: str = '$'
 
     @rx.var
     def user_doc(self) -> dict[str, bool]:
@@ -50,7 +51,8 @@ class State(rx.State):
                 'american': False,
                 'mexican': False,
                 'mediterranean': False,
-                'italian': False
+                'italian': False,
+                'budget': '$'
             }
             firestore_client.write_data_to_collection('user', self.tokeninfo['email'], user_doc)
         
@@ -62,6 +64,7 @@ class State(rx.State):
         self.set_update_mexican(user_doc['mexican'])
         self.set_update_mediterranean(user_doc['mediterranean'])
         self.set_update_italian(user_doc['italian'])
+        self.set_update_budget(user_doc['budget'])
 
         return user_doc
 
@@ -146,7 +149,8 @@ class State(rx.State):
             'american': prefs['american'],
             'mexican': prefs['mexican'],
             'mediterranean': prefs['mediterranean'],
-            'italian': prefs['italian']
+            'italian': prefs['italian'],
+            'budget': prefs['budget']
         }
         firestore_client.update_data_in_collection('user', self.tokeninfo['email'], new_doc)
 
