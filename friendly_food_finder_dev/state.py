@@ -24,6 +24,59 @@ class State(rx.State):
     """
     user_add_friend_email: str
 
+    lowChecked: bool = False
+    midChecked: bool = False
+    highChecked: bool = False
+
+    @rx.var
+    def getLowToggle(self):
+        return self.lowChecked
+
+    def lowToggle(self):
+        self.lowChecked = not self.lowChecked
+
+    def midToggle(self):
+        self.midChecked = not self.midChecked
+
+    def highToggle(self):
+        self.highChecked = not self.highChecked
+
+    # @rx.var
+    # def getPriceSet(self) -> List[str]:
+    #     price_set = []
+    #     if State.lowChecked:
+    #         price_set.append("$")
+    #     if State.midChecked:
+    #         price_set.append("$$")
+    #     if State.highChecked:
+    #         price_set.append("$$$")
+    #     return price_set
+
+    closeChecked: bool = False
+    midChecked: bool = False
+    farChecked: bool = False
+
+    def closeToggle(self):
+        self.closeChecked = not self.closeChecked
+
+    def midToggle(self):
+        self.midChecked = not self.midChecked
+
+    def farToggle(self):
+        self.farChecked = not self.farChecked
+
+    # @rx.var
+    # def getRadius(self) -> int:
+    #     radius = 0
+    #     if self.lowChecked:
+    #         radius = 300
+    #     if self.midChecked:
+    #         radius = 650
+    #     if self.farChecked:
+    #         radius = 1000
+    #     print("Test:", radius)
+    #     return radius
+
     def user_add_friend(self):
         friend_doc = firestore_client.read_from_document('user', self.user_add_friend_email)
         if friend_doc is None:

@@ -41,6 +41,12 @@ def does_user_have_conflict(userID, startHourInterval=0, endHourInterval=2):
                                               timeMax=dateTimeToString(now + timedelta(hours=endHourInterval)), singleEvents=True,
                                               orderBy='startTime').execute()
         events = events_result.get('items', [])
+        
+        noFullDayEvents = []
+        for event in events:
+            if event["start"].get("dateTime") != None:
+                noFullDayEvents.append(event)
+        events = noFullDayEvents
 
         if not events:
             print('No upcoming events found.')
