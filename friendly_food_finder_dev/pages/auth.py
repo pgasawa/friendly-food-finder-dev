@@ -52,7 +52,7 @@ def require_google_login(page) -> rx.Component:
         )
     return _auth_wrapper
 
-@template(route="/auth", title="auth")
+@template(route="/auth", title="Auth")
 @require_google_login
 def auth() -> rx.Component:
     """The auth page.
@@ -61,7 +61,7 @@ def auth() -> rx.Component:
         The UI for the auth page.
     """
     return rx.vstack(
-        rx.heading("auth", font_size="3em"),
+        rx.heading("Auth", font_size="3em"),
         rx.text(f"Welcome to auth, {State.tokeninfo['name']}!"),
         rx.button("Logout", on_click=State.logout)
     )

@@ -19,20 +19,20 @@ class State(rx.State):
 
     The base state is used to store general vars used throughout the app.
     """
-    user_addfriend_email: str
+    user_add_friend_email: str
 
-    def user_addfriend(self):
-        friend_doc = firestore_client.read_from_document('user', self.user_addfriend_email)
+    def user_add_friend(self):
+        friend_doc = firestore_client.read_from_document('user', self.user_add_friend_email)
         if friend_doc is None:
             return rx.window_alert('No user exists with this email!')
         firestore_client.write_data_to_collection('friend', str(uuid.uuid1()), {
             'requester': self.tokeninfo['email'],
-            'requestee': self.user_addfriend_email,
+            'requestee': self.user_add_friend_email,
         })
         friend_name = friend_doc['name']
         return rx.window_alert(f'You are now friends with {friend_name}!')
 
-    def user_showallfriends(self):
+    def user_show_all_friends(self):
         # friend_docs = firestore_client.query_by_condition('friend', 'requester', '==', self.tokeninfo['email'])
         # user_docs = []
         # for friend_doc in friend_docs:
@@ -40,22 +40,22 @@ class State(rx.State):
         #     user_docs.append(friend_doc.to_dict())
         raise NotImplementedError
 
-    def user_showavailablefriends():
+    def user_show_available_friends():
         raise NotImplementedError
 
-    def hangout_getfriendclusters():
+    def hangout_get_friend_clusters():
         raise NotImplementedError
 
-    def hangout_getrestaurants():
+    def hangout_get_restaurants():
         raise NotImplementedError
 
-    def hangout_invitecreate():
+    def hangout_invite_create():
         raise NotImplementedError
 
-    def hangout_inviteaccept():
+    def hangout_invite_accept():
         raise NotImplementedError
 
-    def hangout_invitedecline():
+    def hangout_invite_decline():
         raise NotImplementedError
 
     def feed_show():
