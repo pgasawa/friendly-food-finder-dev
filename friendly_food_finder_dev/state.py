@@ -33,7 +33,7 @@ class State(rx.State):
 
     @rx.var
     def all_friends(self) -> List[dict[str, str]]:
-        friend_docs = firestore_client.query_by_condition('friend', 'requester', '==', self.tokeninfo['email'])
+        friend_docs = firestore_client.query_by_condition('friend', 'requester', '==', self.tokeninfo.get('email'))
         user_docs = []
         for friend_doc in friend_docs:
             user_doc = firestore_client.read_from_document('user', friend_doc['requestee'])
