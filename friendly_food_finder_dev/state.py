@@ -180,7 +180,7 @@ Response:
         user_doc_name = self.tokeninfo["email"]
         user_docref = firestore_client.db.collection("user").document(user_doc_name)
         user_docref.update({"friends": ArrayUnion([{self.user_add_friend_email: {
-            'closeness': "Hella tight",
+            'closeness': "Close Friend",
             'last_hangout': 0,
             'similarities': self.friend_insight(self.user_doc, friend_doc),
         }}])})
