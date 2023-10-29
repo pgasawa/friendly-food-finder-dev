@@ -56,7 +56,7 @@ def require_google_login(page) -> rx.Component:
         )
     return _auth_wrapper
 
-@template(route="/auth", title="Auth - OmNom")
+@template(route="/auth", title="Auth - BiteBuddy")
 @require_google_login
 def auth() -> rx.Component:
     """The auth page.

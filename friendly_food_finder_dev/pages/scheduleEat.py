@@ -7,7 +7,7 @@ import reflex as rx
 import random
 
 
-@template(route="/scheduleEat", title="Schedule Eat - OmNom")
+@template(route="/scheduleEat", title="Schedule Eat - BiteBuddy")
 @require_google_login
 def scheduleEat() -> rx.Component:
     """The scheduleEat page.
