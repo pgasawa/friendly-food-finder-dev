@@ -52,6 +52,7 @@ def friendComponent(friend):
             rx.text("🕒 Hung out {} days ago".format(friend["last_hangout"]), font_size='12px', width='200px', text_align='left'),
             rx.text(friend['friendship_insight'], font_size='12px', width='200px', text_align='left'),
             rx.text(friend['similarities'], font_size='12px', width='200px', text_align='left'),
+            rx.button("Remove friend", on_click=lambda: State.remove_friend(friend["email"])),
             padding_bottom="20px"
         ),
         rx.spacer()

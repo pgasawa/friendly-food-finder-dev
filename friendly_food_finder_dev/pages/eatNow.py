@@ -11,6 +11,8 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+GOOGLE_API_KEY = 'AIzaSyCCZx29xoNYeaewbCBx5d15KBBQM1fOIcA'
+
 @template(route="/eatNow", title="Eat Now - BiteBuddy")
 @require_google_login
 def eatNow() -> rx.Component:
@@ -46,6 +48,33 @@ def eatNow() -> rx.Component:
                         rx.text("Schedule for " + meal[8] + " to " + meal[9]),
                         # rx.image(src=folium.Marker([meal[1].get('coordinates').get('latitude'), meal[1].get('coordinates').get('longitude')], tooltip=meal[1].get("mame")).add_to(folium.Map(location=[meal[1].get('coordinates').get('latitude'), meal[1].get('coordinates').get('longitude')], zoom_start=15)).get_root().render(), width="300px", height="300px"),
                         rx.image(src=meal[4], width="300px", height="250px"),
+                        # rx.el.iframe(
+                        #     width="300",
+                        #     height="350",
+                        #     style="border:0",
+                        #     loading="lazy",
+                        #     allowfullscreen=True,
+                        #     referrerpolicy="no-referrer-when-downgrade",
+                        #     src=f"https://www.google.com/maps/embed/v1/place?key=AIzaSyCCZx29xoNYeaewbCBx5d15KBBQM1fOIcA&q={meal[1]},San Francisco+CA"
+                        # )
+                        rx.box(
+                            element="iframe",
+                            width="300px",
+                            height="350px",
+                            src=f"https://www.google.com/maps/embed/v1/place?key=AIzaSyCCZx29xoNYeaewbCBx5d15KBBQM1fOIcA&q={meal[1]},San Francisco+CA"
+                        )
+                        # rx.html("""
+                        #     <iframe
+                        #         width="300"
+                        #         height="350"
+                        #         style="border:0"
+                        #         loading="lazy"
+                        #         allowfullscreen
+                        #         referrerpolicy="no-referrer-when-downgrade"
+                        #         src="https://www.google.com/maps/embed/v1/place?key=AIzaSyCCZx29xoNYeaewbCBx5d15KBBQM1fOIcA
+                        #             &q={},San Francisco+CA">
+                        #     </iframe>
+                        # """.format(meal[1])),
                     ),
             ))
         )
