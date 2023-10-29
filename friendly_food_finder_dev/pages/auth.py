@@ -35,6 +35,10 @@ def user_info(tokeninfo: dict) -> rx.Component:
 
 def login() -> rx.Component:
     return rx.vstack(
+        rx.heading("Login", font_size="2em"),
+        rx.spacer(),
+        rx.text("To access this page, you need to login first."),
+        rx.spacer(),
         GoogleLogin.create(on_success=State.on_success),
     )
 

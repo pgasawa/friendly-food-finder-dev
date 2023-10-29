@@ -18,7 +18,7 @@ def footer_item(text: str, icon: str, url: str) -> rx.Component:
     """
     # Whether the item is active.
     active = (State.router.page.path.lower() == f"/{text.replace(' ', '').lower()}") | (
-        (State.router.page.path == "/") & text == "Home"
+        (State.router.page.path == "/") & text == "Home - OmNom"
     )
 
     return rx.link(
@@ -30,12 +30,12 @@ def footer_item(text: str, icon: str, url: str) -> rx.Component:
             ),
             bg=rx.cond(
                 active,
-                styles.accent_color,
+                "#afd448",
                 "#eeffbf",
             ),
             color=rx.cond(
                 active,
-                styles.accent_text_color,
+                "styles.text_color",
                 styles.text_color,
             ),
             border_radius=styles.border_radius,
@@ -83,7 +83,7 @@ def footer() -> rx.Component:
         rx.hstack(
             *[
                 footer_item(
-                    text=page.get("title", page["route"].strip("/").capitalize()),
+                    text=page.get("title", page["route"].strip("/").capitalize()).split(" - ")[0],
                     icon=page.get("image", rx.cond((State.number_of_incoming_invite > 0) & (page["route"] == "/notifications"), images[page["route"] + "2"], images[page["route"]])),
                     url=page["route"],
                 )
