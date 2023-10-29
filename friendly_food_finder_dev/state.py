@@ -217,6 +217,29 @@ Response:
         user_docs.sort(key=lambda x: (-len(x['friendship_insight']), x['last_hangout']))
         return user_docs
     
+    def remove_friend(self, other):
+        friend_pairs = firestore_client.get_all_documents_from_collection("friend")
+        for pair in friend_pairs:
+            if pair.get("requester") == self.tokeninfo["email"] and pair.get("requestee") == other:
+                firestore_client.delete_data_from_collection("friend", pair.get("doc_id"))
+                # pass
+        
+        user_doc = firestore_client.read_from_document("user", self.tokeninfo["email"])
+        print(user_doc)
+        result_friends = []
+        friends = user_doc.get("friends")
+        for friend in friends:
+            print(list(friend.keys())[0], other)
+            if other != list(friend.keys())[0]:
+                result_friends.append(friend)
+        print(result_friends)
+        update = {
+            "friends": result_friends
+        }
+
+        firestore_client.update_data_in_collection("user", self.tokeninfo["email"], update)
+
+    
     def update_profile(self, prefs: dict[str, bool]):
         new_doc = {
             'vegetarian': prefs['vegetarian'],

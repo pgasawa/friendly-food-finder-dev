@@ -49,7 +49,9 @@ class Firebase:
         result = []
         docs = self.db.collection(collection_name).stream()
         for doc in docs:
-            result.append(doc.to_dict())
+            doc_dict = doc.to_dict()
+            doc_dict["doc_id"] = doc.id
+            result.append(doc_dict)
         return result
 
 firestore_client = Firebase()
