@@ -14,7 +14,11 @@ def scheduleEat() -> rx.Component:
     Returns:
         The UI for the scheduleEat page.
     """
+    clusters = State.populate_clusters
+    print("YOOO" ,clusters)
+
     return rx.vstack(
+        rx.text(clusters),
         rx.heading("Week of October 30th — November 3rd!", font_size="3em"),
         rx.text("Let's plan the week."),
         rx.hstack(

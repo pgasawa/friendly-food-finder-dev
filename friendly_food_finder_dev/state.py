@@ -16,6 +16,7 @@ import requests
 
 from friendly_food_finder_dev.GoogleAPI import does_user_have_conflict
 from friendly_food_finder_dev.pages.llm import recommend_restaurants, collect_cuisine_prefs, collect_dietary_prefs, call_together_ai
+from friendly_food_finder_dev.pages.cluster import Scheduler
 
 from google.auth.transport import requests as googlerequests
 from google.oauth2.id_token import verify_oauth2_token
@@ -230,6 +231,14 @@ Response:
                 friend_data[i][friend_email]['closeness'] = option
         user_docref = firestore_client.db.collection("user").document(user_doc_name)
         user_docref.update({"friends": friend_data})
+
+    clusters: dict = {}
+    @rx.var
+    def populate_clusters(self):
+        scheduler = Scheduler(self.tokeninfo['email'])
+        scheduler.populate_with_firebase_data()
+        scheduler.populate_adjacency_matrix()
+        return scheduler.generate_groupings()
 
     def user_show_available_friends():
         raise NotImplementedError
