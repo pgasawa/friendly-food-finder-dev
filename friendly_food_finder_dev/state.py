@@ -9,6 +9,7 @@ import os
 import os.path
 import json
 import time
+from random import randint
 
 from google.auth.transport import requests
 from google.oauth2.id_token import verify_oauth2_token
@@ -133,7 +134,7 @@ class State(rx.State):
         friend_name = friend_doc['name']
         user_doc_name = self.tokeninfo["email"]
         user_docref = firestore_client.db.collection("user").document(user_doc_name)
-        user_docref.update({"friends": ArrayUnion([{self.user_add_friend_email: {'closeness': "Hella tight"}}])})
+        user_docref.update({"friends": ArrayUnion([{self.user_add_friend_email: {'closeness': "Hella tight", 'last_hangout': randint(1, 23)}}])})
 
     @rx.var
     def all_friends(self) -> List[dict[str, str]]:
@@ -141,6 +142,12 @@ class State(rx.State):
         user_docs = []
         for friend_doc in friend_docs:
             user_doc = firestore_client.read_from_document('user', friend_doc['requestee'])
+            
+            friend_data = firestore_client.read_from_document("user", self.tokeninfo.get('email'))["friends"]
+            for i in range(len(friend_data)):
+                if user_doc['email'] in friend_data[i]:
+                    user_doc["last_hangout"] = friend_data[i][user_doc['email']]["last_hangout"]
+                    break
             user_docs.append(user_doc)
         print(user_docs)
         return user_docs
