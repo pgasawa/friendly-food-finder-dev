@@ -12,6 +12,7 @@ import time
 import math
 import random
 from datetime import datetime, timedelta
+import requests
 
 from friendly_food_finder_dev.GoogleAPI import does_user_have_conflict
 from friendly_food_finder_dev.pages.llm import recommend_restaurants
@@ -289,14 +290,8 @@ class State(rx.State):
     def get_free_friends(self, user):
         if 'email' not in self.tokeninfo:
             return []
-<<<<<<< Updated upstream
-        print("SLEEP", self.id_token_json)
-        print("SELF", self.tokeninfo)
-        friend_emails = [list(x.keys())[0] for x in user.get('friends')]
-=======
         
-        friend_emails = [list(x.keys())[0] for x in firestore_client.read_from_document('user', self.tokeninfo["email"]).get('friends')]
->>>>>>> Stashed changes
+        friend_emails = [list(x.keys())[0] for x in user.get('friends')]
         friends = [firestore_client.read_from_document('user', friend_email) for friend_email in friend_emails]
         friends = [friend for friend in friends if not does_user_have_conflict(friend['email'], 0, 1)]
         friends = [friend for friend in friends if self.haversine(37.7845607111444, -122.40337703253672, friend['latitude'], friend['longitude']) < 1000]
@@ -310,7 +305,6 @@ class State(rx.State):
     def possible_meals(self) -> List[tuple[str, str, str]]:
         if self.current_path != "/eatNow":
             return []
-<<<<<<< Updated upstream
         else:
             if 'email' not in self.tokeninfo:
                 return []
@@ -320,51 +314,11 @@ class State(rx.State):
             user = firestore_client.read_from_document('user', self.tokeninfo["email"])
             friends = self.get_free_friends(user)
             if self.id_token_json == "":
-=======
-        if self.id_token_json == "":
-            return []
-        friends = self.get_free_friends()
-        if self.id_token_json == "":
-            return []
-        
-        # TODO need user doc
-        user = firestore_client.read_from_document('user', self.tokeninfo["email"])
-        
-        # radius = 600
-        # viable_list = self.get_nearby_restaurants(user, radius)
-        viable_list = json.load(open('restaurant_pre_list.json', 'r'))['data']
-        # get_nearby_restaurants(user, radius)
-
-        price_set = ["$", "$$", "$$$", "$$$$"]
-
-        viable_list = [x for x in viable_list if x.get("price") in price_set]
-        possible_meals = {}
-        friend_info = {}
-
-        for friend in friends:
-            friend_info[friend.get('email')] = friend
-            intersection = [dict1 for dict1 in viable_list for dict2 in viable_list if dict1.get("name") == dict2.get("name")]
-            if intersection:
-                possible_meals[friend.get('email')] = intersection
-
-        for friend in friends:
-            possible_meals[friend.get('email')] = viable_list
-
-        keys = list(possible_meals.keys())
-        random.shuffle(keys)
-
-        selected_suggestions = []
-
-        for key in keys[:3]:
-            items = possible_meals[key]
-            if len(items) == 0:
->>>>>>> Stashed changes
-                return []
+                return []            
             
-            radius = 600
-            
-            
+            # radius = 600
             # viable_list = self.get_nearby_restaurants(user, radius)
+
             viable_list = json.load(open('restaurant_pre_list.json', 'r'))['data']
             # get_nearby_restaurants(user, radius)
 
