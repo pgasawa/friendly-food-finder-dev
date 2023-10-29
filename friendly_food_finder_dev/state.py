@@ -25,9 +25,9 @@ from . import GoogleAPI
 CLIENT_ID = "419615612188-fupdhp748n09ba2ibt0qi9633lk1pkhp.apps.googleusercontent.com"
 
 expected_last_hangout = {
-    'Hella tight': 7,
-    'Kinda close': 14,
-    'Lowkey chill': 21
+    'Hella tight': 14,
+    'Kinda close': 21,
+    'Lowkey chill': 30
 }
 
 class State(rx.State):
@@ -197,7 +197,7 @@ class State(rx.State):
         friend_data = firestore_client.read_from_document("user", user_doc_name)["friends"]
         for i in range(len(friend_data)):
             if friend_email in friend_data[i]:
-                friend_data[i][friend_email] = {"closeness": option}
+                friend_data[i][friend_email]['closeness'] = option
         user_docref = firestore_client.db.collection("user").document(user_doc_name)
         user_docref.update({"friends": friend_data})
 
