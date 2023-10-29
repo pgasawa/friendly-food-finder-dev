@@ -29,7 +29,7 @@ def menu_button() -> rx.Component:
         rx.menu(
             rx.menu_button(
                 rx.icon(
-                    tag="hamburger",
+                    tag="settings",
                     size="4em",
                     color=styles.text_color,
                 ),
