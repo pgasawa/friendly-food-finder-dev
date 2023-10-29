@@ -311,7 +311,6 @@ class State(rx.State):
         # get_nearby_restaurants(user, radius)
 
         price_set = ["$", "$$", "$$$", "$$$$"]
-        print("HFIUWEHFIU", price_set)
 
         viable_list = [x for x in viable_list if x.get("price") in price_set]
         possible_meals = {}
