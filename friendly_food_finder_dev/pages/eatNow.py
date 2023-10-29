@@ -55,6 +55,7 @@ def eatNow() -> rx.Component:
                             ),
                             rx.text(meal[3]),
                         ),
+                        rx.text(meal[5] + " minutes away"),
                         # rx.image(src=folium.Marker([meal[1].get('coordinates').get('latitude'), meal[1].get('coordinates').get('longitude')], tooltip=meal[1].get("mame")).add_to(folium.Map(location=[meal[1].get('coordinates').get('latitude'), meal[1].get('coordinates').get('longitude')], zoom_start=15)).get_root().render(), width="300px", height="300px"),
                         rx.image(src=meal[4], width="300px", height="250px"),
                     ),

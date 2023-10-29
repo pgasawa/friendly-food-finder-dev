@@ -266,6 +266,15 @@ class State(rx.State):
         distance = earth_radius * c
 
         return distance
+    
+    def calculate_time(self, lat1, lon1, lat2, lon2, speed=1.352, round=1):
+        """
+        speed = m/s walk
+        """
+        meter_distance = self.haversine(lat1, lon1, lat2, lon2)
+        print("Meter", meter_distance)
+        time_needed = ((meter_distance / speed / 60) // round) * round + round
+        return int(time_needed)
 
     def get_free_friends(self):
         # print("SLEEP", self.id_token_json)
@@ -277,7 +286,7 @@ class State(rx.State):
         return friends
 
     @rx.var
-    def possible_meals(self) -> List[tuple[str, str, str]]:
+    def possible_meals(self) -> List[tuple[str, str, str, str, str, str, str]]:
         if self.id_token_json == "":
             return []
         friends = self.get_free_friends()
@@ -297,14 +306,16 @@ class State(rx.State):
 
         viable_list = [x for x in viable_list if x.get("price") in price_set]
         possible_meals = {}
+        friend_info = {}
 
         for friend in friends:
+            friend_info[friend.get('email')] = friend
             intersection = [dict1 for dict1 in viable_list for dict2 in viable_list if dict1.get("name") == dict2.get("name")]
             if intersection:
-                possible_meals[friend.get('name')] = intersection
+                possible_meals[friend.get('email')] = intersection
 
         for friend in friends:
-            possible_meals[friend.get('name')] = viable_list
+            possible_meals[friend.get('email')] = viable_list
 
         keys = list(possible_meals.keys())
         random.shuffle(keys)
@@ -316,11 +327,18 @@ class State(rx.State):
             if len(items) == 0:
                 return []
             selected_item = random.choice(items)
-            print("Your LatLong", user.get("latitude"), user.get("longitude"))
-            print("Other Person", key)
-            print("LatLong", selected_item.get("coordinates").get("latitude"), selected_item.get("coordinates").get("longitude"))
+
+            friend = friend_info[key]
+
+            userLat, userLong = user.get("latitude"), user.get("longitude")
+            friendLat, friendLong = friend.get("latitude"), friend.get("longitude")
+            restLat, restLong = selected_item.get("coordinates").get("latitude"), selected_item.get("coordinates").get("longitude")
             
-            selected_suggestions.append((key, selected_item.get('name'), selected_item.get('url'), selected_item.get('price'), selected_item.get('image_url')))
+            yourDistance = self.calculate_time(userLat, userLong, restLat, restLong)
+            friendDistance = self.calculate_time(friendLat, friendLong, restLat, restLong)
+            print("Time", yourDistance, friendDistance)
+
+            selected_suggestions.append((friend.get("name"), selected_item.get('name'), selected_item.get('url'), selected_item.get('price'), selected_item.get('image_url'), str(yourDistance), str(max(yourDistance, friendDistance))))
 
         # print(selected_suggestions)
         return selected_suggestions
