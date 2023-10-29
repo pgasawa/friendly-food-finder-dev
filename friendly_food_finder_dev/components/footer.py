@@ -63,7 +63,13 @@ def footer() -> rx.Component:
         '/friends': '/friends.png',
         '/scheduleEat': '/calendar-solid.svg',
         '/settings': '/settings.png',
+        '/eatNow2': '/eat_now.png',
+        '/feed2': '/feed.png',
+        '/friends2': '/friends.png',
+        '/scheduleEat2': '/calendar-solid.svg',
+        '/settings2': '/settings.png',
         '/notifications': '/bell.png',
+        '/notifications2': '/notification.png',
     }
 
     decorated_pages = []
@@ -78,7 +84,7 @@ def footer() -> rx.Component:
             *[
                 footer_item(
                     text=page.get("title", page["route"].strip("/").capitalize()),
-                    icon=page.get("image", images[page["route"]]),
+                    icon=page.get("image", rx.cond((State.number_of_incoming_invite > 0) & (page["route"] == "/notifications"), images[page["route"] + "2"], images[page["route"]])),
                     url=page["route"],
                 )
                 for page in decorated_pages if page.get("title", page["route"].strip("/").capitalize()) not in ["Auth - OmNom", "Home - OmNom", "Settings - OmNom"]

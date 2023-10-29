@@ -400,7 +400,7 @@ Response:
         return invites
 
     @rx.cached_var
-    def number_of_incoming_invite(self):
+    def number_of_incoming_invite(self) -> int:
         if self.id_token_json == "":
             return []
         
