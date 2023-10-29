@@ -32,7 +32,7 @@ def scheduleEat() -> rx.Component:
                     ),
                     rx.vstack(
                         rx.text("Lunch at " + random.choice(["11:15am", "11:30am", "11:45am", "12:00pm", "12:15pm", "12:30pm", "12:45pm", "1:00pm", "1:15pm", "1:30pm"]), font_size="1em"),
-                        rx.text("Location: " + random.choice(["Joyride Pizza - Yerba Buena Gardens", "The View Lounge", "Ippudo San Francisco", "Freshroll Vietnamese Rolls and Bowls", "Oren's Hummus", "Bodega", "Bimi Poke", "Fresca Garden", "The Harlequin"])),
+                        rx.text("Location: " + random.choice(["Raavi North Indian Cuisine"])),
                         rx.text("Who's going?"),
                         rx.hstack(
                             rx.foreach(State.populate_clusters[0:1], lambda cluster: 
@@ -70,7 +70,7 @@ def scheduleEat() -> rx.Component:
                     ),
                     rx.vstack(
                         rx.text("Lunch at " + random.choice(["11:15am", "11:30am", "11:45am", "12:00pm", "12:15pm", "12:30pm", "12:45pm", "1:00pm", "1:15pm", "1:30pm"]), font_size="1em"),
-                        rx.text("Location: " + random.choice(["Joyride Pizza - Yerba Buena Gardens", "The View Lounge", "Ippudo San Francisco", "Freshroll Vietnamese Rolls and Bowls", "Oren's Hummus", "Bodega", "Bimi Poke", "Fresca Garden", "The Harlequin"])),
+                        rx.text("Location: " + random.choice(["Basil Thai Restaurant & Bar"])),
                         rx.text("Who's going?"),
                         rx.hstack(
                             rx.foreach(State.populate_clusters[1:2], lambda cluster: 
@@ -108,7 +108,7 @@ def scheduleEat() -> rx.Component:
                     ),
                     rx.vstack(
                         rx.text("Lunch at " + random.choice(["11:15am", "11:30am", "11:45am", "12:00pm", "12:15pm", "12:30pm", "12:45pm", "1:00pm", "1:15pm", "1:30pm"]), font_size="1em"),
-                        rx.text("Location: " + random.choice(["Joyride Pizza - Yerba Buena Gardens", "The View Lounge", "Ippudo San Francisco", "Freshroll Vietnamese Rolls and Bowls", "Oren's Hummus", "Bodega", "Bimi Poke", "Fresca Garden", "The Harlequin"])),
+                        rx.text("Location: " + random.choice(["Tacos Sinaloa"])),
                         rx.text("Who's going?"),
                         rx.hstack(
                             rx.foreach(State.populate_clusters[2:3], lambda cluster: 
@@ -146,7 +146,7 @@ def scheduleEat() -> rx.Component:
                     ),
                     rx.vstack(
                         rx.text("Lunch at " + random.choice(["11:15am", "11:30am", "11:45am", "12:00pm", "12:15pm", "12:30pm", "12:45pm", "1:00pm", "1:15pm", "1:30pm"]), font_size="1em"),
-                        rx.text("Location: " + random.choice(["Joyride Pizza - Yerba Buena Gardens", "The View Lounge", "Ippudo San Francisco", "Freshroll Vietnamese Rolls and Bowls", "Oren's Hummus", "Bodega", "Bimi Poke", "Fresca Garden", "The Harlequin"])),
+                        rx.text("Location: " + random.choice(["Burma Superstar"])),
                         rx.text("Who's going?"),
                         rx.hstack(
                             rx.foreach(State.populate_clusters[3:4], lambda cluster: 
@@ -164,7 +164,7 @@ def scheduleEat() -> rx.Component:
                                 ),
                             ),
                         ),
-                        rx.button('Join event', color_scheme='whatsapp'),
+                        # rx.button('Join event', color_scheme='whatsapp'),
                     ),
                 ),
                 # footer=rx.heading("Footer", size="sm"),
@@ -184,7 +184,7 @@ def scheduleEat() -> rx.Component:
                     ),
                     rx.vstack(
                         rx.text("Lunch at " + random.choice(["11:15am", "11:30am", "11:45am", "12:00pm", "12:15pm", "12:30pm", "12:45pm", "1:00pm", "1:15pm", "1:30pm"]), font_size="1em"),
-                        rx.text("Location: " + random.choice(["Joyride Pizza - Yerba Buena Gardens", "The View Lounge", "Ippudo San Francisco", "Freshroll Vietnamese Rolls and Bowls", "Oren's Hummus", "Bodega", "Bimi Poke", "Fresca Garden", "The Harlequin"])),
+                        rx.text("Location: " + random.choice(["Turtle Tower"])),
                         rx.text("Who's going?"),
                         rx.hstack(
                             rx.foreach(State.populate_clusters[4:5], lambda cluster: 
@@ -202,7 +202,7 @@ def scheduleEat() -> rx.Component:
                                 ),
                             ),
                         ),
-                        rx.button('Join event', color_scheme='whatsapp'),
+                        # rx.button('Join event', color_scheme='whatsapp'),
                     ),
                 ),
                 # footer=rx.heading("Footer", size="sm"),
