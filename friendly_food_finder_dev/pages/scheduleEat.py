@@ -14,6 +14,7 @@ def scheduleEat() -> rx.Component:
     Returns:
         The UI for the scheduleEat page.
     """
+
     return rx.vstack(
         rx.heading("Week of October 30th — November 3rd!", font_size="3em"),
         rx.text("Let's plan the week."),
@@ -28,26 +29,9 @@ def scheduleEat() -> rx.Component:
                         src="/paneer.png",
                         height="7.5em",
                     ),
-                    # rx.vstack(
-                    #     rx.foreach(State.possible_meals,
-                    #         lambda meal: rx.card(
-                    #             rx.vstack(
-                    #                 rx.heading(meal[0]),
-                    #                 rx.hstack(
-                    #                     rx.link(
-                    #                         rx.text(meal[1]),
-                    #                         href=meal[2],
-                    #                         color="rgb(2,133,194)",
-                    #                     ),
-                    #                     rx.text(meal[3]),
-                    #                 ),
-                    #                 rx.text(meal[5] + " minutes away"),
-                    #                 rx.button("Invite!", on_click=lambda: State.invite(0, 0, 0)),
-                    #                 rx.text("Schedule for " + meal[7] + " to " + meal[8]),
-                    #                 rx.image(src=meal[4], width="300px", height="250px"),
-                    #             ),
-                    #     ))
-                    # ),
+                    rx.vstack(
+                        rx.foreach(State.populate_clusters, lambda cluster: rx.text(cluster)),
+                    ),
                 ),
                 footer=rx.heading("Footer", size="sm"),
                 width="15em",
