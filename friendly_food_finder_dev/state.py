@@ -268,6 +268,8 @@ class State(rx.State):
         return distance
 
     def get_free_friends(self):
+        if 'email' not in self.tokeninfo:
+            return []
         print("SLEEP", self.id_token_json)
         print("SELF", self.tokeninfo)
         friend_emails = [list(x.keys())[0] for x in firestore_client.read_from_document('user', self.tokeninfo["email"]).get('friends')]
@@ -278,6 +280,8 @@ class State(rx.State):
 
     @rx.var
     def possible_meals(self) -> List[tuple[str, str, str]]:
+        if 'email' not in self.tokeninfo:
+            return []
         if self.id_token_json == "":
             return []
         friends = self.get_free_friends()
