@@ -343,12 +343,97 @@ Response:
     @rx.var
     def current_path(self):
         return self.get_current_page()
+    
+    def invite(self, location, friendName, friendEmail, friendDistance, startTime, endTime, selfName, locationImage, selfDistance, expensiveness, locationurl):
+        # Make sure the sender doesn't have an active invite already.
+        if self.id_token_json == "":
+            return None
+        
+        docs = firestore_client.get_all_documents_from_collection("invites")
+        for doc in docs:
+            if doc.get("sender") == self.tokeninfo["email"]:
+                return
+        
+        invite_info = {
+            'sender': self.tokeninfo["email"],
+            'senderName': selfName,
+            'receiver': friendEmail,
+            'receiverName': friendName,
+            'location': location,
+            'locationurl': locationurl,
+            'locationImage': locationImage,
+            'senderTimeDistance': selfDistance,
+            'expensiveness': expensiveness,
+            'recieverTimeDistance': friendDistance,
+            'startTime': startTime,
+            'endTime': endTime,
+        }
+        firestore_client.write_data_to_collection('invites', self.tokeninfo['email'], invite_info)
+
+    @rx.cached_var
+    def incoming_invites(self) -> List[tuple[str, str, str]]:
+        if self.id_token_json == "":
+            return []
+        
+        invites = []
+        docs = firestore_client.get_all_documents_from_collection("invites")
+        for doc in docs:
+            if doc.get("receiver") == self.tokeninfo["email"]:
+                invites.append((doc.get("receiverName"), doc.get("location"), doc.get("locationurl"), 
+                            doc.get("expensiveness"), doc.get("locationImage"), 
+                            doc.get("senderTimeDistance"), doc.get("recieverTimeDistance"), max(doc.get("senderTimeDistance"), doc.get("recieverTimeDistance")),
+                            doc.get("startTime"), doc.get("endTime"), 
+                            doc.get("receiver"), doc.get("senderName"), False))
+        print(invites)
+        return invites
+
+    @rx.cached_var
+    def number_of_incoming_invite(self):
+        if self.id_token_json == "":
+            return []
+        
+        count = 0
+        docs = firestore_client.get_all_documents_from_collection("invites")
+        for doc in docs:
+            if doc.get("receiver") == self.tokeninfo["email"]:
+                count += 1
+        return count
+    
+    def decline_incoming_invite(self, senderEmail):
+        if self.id_token_json == "":
+            return None
+        
+        docs = firestore_client.get_all_documents_from_collection("invites")
+        for doc in docs:
+            if doc.get("sender") == senderEmail and doc.get("receiver") == self.tokeninfo["email"]:
+                firestore_client.delete_data_from_collection("invites", senderEmail)
+
+    def accept_incoming_invite(self, senderEmail):
+        if self.id_token_json == "":
+            return None
+
+        docs = firestore_client.get_all_documents_from_collection("invites")
+        for doc in docs:
+            if doc.get("sender") == senderEmail and doc.get("receiver") == self.tokeninfo["email"]:
+                GoogleAPI.send_cal_invite(senderEmail, self.tokeninfo["email"], doc.get("startTime"), doc.get("endTime"))
+                firestore_client.delete_data_from_collection("invites", senderEmail)
+            elif doc.get("receiver") == self.tokeninfo["email"]:
+                firestore_client.delete_data_from_collection("invites", doc.get("sender"))
 
     @rx.cached_var
     def possible_meals(self) -> List[tuple[str, str, str]]:
         if self.current_path != "/eatNow":
             return []
         else:
+            docs = firestore_client.get_all_documents_from_collection("invites")
+            for doc in docs:
+                if doc.get("sender") == self.tokeninfo["email"]:
+                    return [(doc.get("friendName"), doc.get("location"), doc.get("locationurl"), 
+                            doc.get("expensiveness"), doc.get("locationImage"), 
+                            doc.get("senderTimeDistance"), doc.get("recieverTimeDistance"), max(doc.get("senderTimeDistance"), doc.get("recieverTimeDistance")),
+                            doc.get("startTime"), doc.get("endTime"), 
+                            doc.get("reciever"), doc.get("senderName"), True)]
+
             if 'email' not in self.tokeninfo:
                 return []
             if self.id_token_json == "":
@@ -415,8 +500,11 @@ Response:
                 print(startDateTime.strftime("%I:%M %p"))
                 print(endDateTime.strftime("%I:%M %p"))
 
-                selected_suggestions.append((friend.get("name"), selected_item.get('name'), selected_item.get('url'), selected_item.get('price'), selected_item.get('image_url'), 
-                                            str(yourDistance), str(max(yourDistance, friendDistance)), startDateTime.strftime("%I:%M %p"), endDateTime.strftime("%I:%M %p")))
+                selected_suggestions.append((friend.get("name"), selected_item.get('name'), selected_item.get('url'), 
+                                             selected_item.get('price'), selected_item.get('image_url'), 
+                                            str(yourDistance), str(friendDistance), str(max(yourDistance, friendDistance)),
+                                            startDateTime.strftime("%I:%M %p"), endDateTime.strftime("%I:%M %p"), 
+                                            key, user.get("name"), False))
 
             # print(selected_suggestions)
             return selected_suggestions
