@@ -39,7 +39,7 @@ def require_google_login(page) -> rx.Component:
         )
     return _auth_wrapper
 
-@template(route="/settings", title="Settings")
+@template(route="/settings", title="Settings - OmNom")
 @require_google_login
 def profile() -> rx.Component:
     """The profile page.

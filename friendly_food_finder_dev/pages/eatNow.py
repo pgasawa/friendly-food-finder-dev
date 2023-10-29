@@ -11,7 +11,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-@template(route="/eatNow", title="Eat Now")
+@template(route="/eatNow", title="Eat Now - OmNom")
 @require_google_login
 def eatNow() -> rx.Component:
     """The eatNow page.
@@ -40,7 +40,7 @@ def eatNow() -> rx.Component:
                         rx.text(meal[5] + " minute(s) away"),
                         rx.button(rx.cond(meal[12], "Invited! ✔️", "Invite"), 
                                   is_disabled=rx.cond(meal[12], True, False),
-                                  on_click=lambda: State.invite(meal[1], meal[0], meal[10], meal[6], meal[8], meal[9], meal[11], meal[4], meal[5], meal[3], meal[2])
+                                  on_click=lambda: State.invite(meal[1], meal[0], meal[10], meal[6], meal[8], meal[9], meal[11], meal[4], meal[5], meal[3], meal[2], meal[13])
                                 ), # Xd
                         
                         rx.text("Schedule for " + meal[8] + " to " + meal[9]),

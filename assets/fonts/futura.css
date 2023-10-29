@@ -1,0 +1,10 @@
+@font-face {
+    font-family: "Futura Extra Bold";
+    src: url("FuturaExtraBold.otf") format("opentype");
+}
+
+@font-face {
+    font-family: "Futura Extra Bold";
+    font-weight: bold;
+    src: url("FuturaExtraBold.otf") format("opentype");
+}

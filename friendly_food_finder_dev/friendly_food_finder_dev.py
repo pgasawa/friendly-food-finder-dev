@@ -8,5 +8,10 @@ from friendly_food_finder_dev.pages import *
 import reflex as rx
 
 # Create the app and compile it.
-app = rx.App(style=styles.base_style)
+app = rx.App(
+    style=styles.base_style,
+    stylesheets=[
+        "fonts/futura.css"
+    ]
+)
 app.compile()
