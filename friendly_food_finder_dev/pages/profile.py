@@ -39,7 +39,7 @@ def require_google_login(page) -> rx.Component:
         )
     return _auth_wrapper
 
-@template(route="/settings", title="Settings - OmNom")
+@template(route="/settings", title="Settings - BiteBuddy")
 @require_google_login
 def profile() -> rx.Component:
     """The profile page.
@@ -74,7 +74,7 @@ def profile() -> rx.Component:
                         rx.switch('Mediterranean', is_checked=State.update_mediterranean, on_change=State.set_update_mediterranean, width='100px', color_scheme='green'),
                         rx.switch('Italian', is_checked=State.update_italian, on_change=State.set_update_italian, width='100px', color_scheme='green'),
                     )),
-                    ("Budget per meal", rx.select(
+                    ("Desired Spending Level", rx.select(
                         budget_options,
                         value=State.update_budget,
                         on_change=State.set_update_budget

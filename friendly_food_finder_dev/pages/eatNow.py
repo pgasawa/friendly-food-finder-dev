@@ -11,7 +11,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-@template(route="/eatNow", title="Eat Now - OmNom")
+@template(route="/eatNow", title="Eat Now - BiteBuddy")
 @require_google_login
 def eatNow() -> rx.Component:
     """The eatNow page.

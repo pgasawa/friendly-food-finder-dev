@@ -44,7 +44,7 @@ def menu_button() -> rx.Component:
                         )
                     )
                     for page in get_decorated_pages() if 
-                    page.get("title", page["route"].strip("/").capitalize()) not in ["Home - OmNom", "Eat Now - OmNom", "Feed - OmNom", "Friends - OmNom", "Schedule Eat - OmNom", "Auth - OmNom", "Notifications - OmNom"]
+                    page.get("title", page["route"].strip("/").capitalize()) not in ["Home - BiteBuddy", "Eat Now - BiteBuddy", "Feed - BiteBuddy", "Friends - BiteBuddy", "Schedule Eat - BiteBuddy", "Auth - BiteBuddy", "Notifications - BiteBuddy"]
                 ]
             ),
         ),
@@ -63,7 +63,7 @@ def logo() -> rx.Component:
                 height="auto"
             ),
             rx.heading(
-                "OmNom",
+                "BiteBuddy",
                 font_family="Futura Extra Bold",
                 color="#b0d644",
                 font_size="1.5em"

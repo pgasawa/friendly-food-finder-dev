@@ -6,7 +6,7 @@ from friendly_food_finder_dev.state import State
 import reflex as rx
 
 
-@template(route="/scheduleEat", title="Schedule Eat - OmNom")
+@template(route="/scheduleEat", title="Schedule Eat - BiteBuddy")
 @require_google_login
 def scheduleEat() -> rx.Component:
     """The scheduleEat page.

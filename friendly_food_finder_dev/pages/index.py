@@ -6,7 +6,7 @@ from friendly_food_finder_dev.templates import template
 import reflex as rx
 
 
-@template(route="/", title="Home - OmNom")
+@template(route="/", title="Home - BiteBuddy")
 def index() -> rx.Component:
     """The home page.
 

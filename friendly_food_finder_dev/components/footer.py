@@ -18,7 +18,7 @@ def footer_item(text: str, icon: str, url: str) -> rx.Component:
     """
     # Whether the item is active.
     active = (State.router.page.path.lower() == f"/{text.replace(' ', '').lower()}") | (
-        (State.router.page.path == "/") & text == "Home - OmNom"
+        (State.router.page.path == "/") & text == "Home - BiteBuddy"
     )
 
     return rx.link(
@@ -73,7 +73,7 @@ def footer() -> rx.Component:
     }
 
     decorated_pages = []
-    for pageTitle in ["Feed - OmNom", "Friends - OmNom", "Eat Now - OmNom", "Schedule Eat - OmNom", "Notifications - OmNom", "Settings - OmNom"]:
+    for pageTitle in ["Feed - BiteBuddy", "Friends - BiteBuddy", "Eat Now - BiteBuddy", "Schedule Eat - BiteBuddy", "Notifications - BiteBuddy", "Settings - BiteBuddy"]:
         for page in get_decorated_pages():
             if page.get("title") == pageTitle:
                 decorated_pages.append(page)
@@ -87,7 +87,7 @@ def footer() -> rx.Component:
                     icon=page.get("image", rx.cond((State.number_of_incoming_invite > 0) & (page["route"] == "/notifications"), images[page["route"] + "2"], images[page["route"]])),
                     url=page["route"],
                 )
-                for page in decorated_pages if page.get("title", page["route"].strip("/").capitalize()) not in ["Auth - OmNom", "Home - OmNom"]
+                for page in decorated_pages if page.get("title", page["route"].strip("/").capitalize()) not in ["Auth - BiteBuddy", "Home - BiteBuddy"]
             ],
             width="100%",
             overflow_x="auto",
