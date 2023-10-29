@@ -286,8 +286,10 @@ class State(rx.State):
         return int(time_needed)
 
     def get_free_friends(self):
-        # print("SLEEP", self.id_token_json)
-        # print("SELF", self.tokeninfo)
+        if 'email' not in self.tokeninfo:
+            return []
+        print("SLEEP", self.id_token_json)
+        print("SELF", self.tokeninfo)
         friend_emails = [list(x.keys())[0] for x in firestore_client.read_from_document('user', self.tokeninfo["email"]).get('friends')]
         friends = [firestore_client.read_from_document('user', friend_email) for friend_email in friend_emails]
         friends = [friend for friend in friends if not does_user_have_conflict(friend['email'], 0, 1)]
@@ -295,7 +297,9 @@ class State(rx.State):
         return friends
 
     @rx.var
-    def possible_meals(self) -> List[tuple[str, str, str, str, str, str, str]]:
+    def possible_meals(self) -> List[tuple[str, str, str]]:
+        if 'email' not in self.tokeninfo:
+            return []
         if self.id_token_json == "":
             return []
         friends = self.get_free_friends()
