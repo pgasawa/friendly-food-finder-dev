@@ -69,9 +69,6 @@ def logo() -> rx.Component:
                 font_size="1.5em"
             )
         ),
-        box_shadow="md",
-        border_radius="20px",
-        padding="0.25em 1em",
         position="fixed",
         left="1.5em",
         top="1.5em",
