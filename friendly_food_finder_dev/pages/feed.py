@@ -1,6 +1,7 @@
 """The feed page."""
 from friendly_food_finder_dev.templates import template
 from friendly_food_finder_dev.pages.auth import require_google_login
+from friendly_food_finder_dev.utils import prettydate
 
 import reflex as rx
 import calendar
@@ -30,26 +31,51 @@ def eventCard(event) -> rx.Component:
     attendees = event[0]
     restaurant = event[1]
     time = event[2]
-    formatted_date = f"{calendar.month_name[int(time[5:7])]} {time[8:10]}, {time[0:4]}"
-    avatars = [rx.image(src=firestore_client.read_from_document("user", attendant)['picture'], width="100px", height="auto", border_radius="50px 50px", border="2px solid #555", box_shadow="lg",) for attendant in attendees]
+    description = event[3]
+    picture = event[4]
+    formatted_date = prettydate(datetime.datetime.fromisoformat(time).replace(tzinfo=None))
+
+    attendant_docs = [
+        firestore_client.read_from_document("user", attendant)
+        for attendant in attendees
+    ]
+
+    avatars = [
+        rx.image(src=attendant['picture'],
+                 width="80px", height="auto", border_radius="50%",
+                 padding_right="20px", padding_bottom="20px")
+        for attendant in attendant_docs
+    ]
+
+    names = [
+        attendant['name']
+        for attendant in attendant_docs
+    ]
 
     return rx.card(
         rx.vstack(
+            rx.heading(f"Lunch at {restaurant}", size="md", width='100%', text_align='left'),
+            rx.spacer(),
+            rx.spacer(),
+            rx.text('🕒  ' + formatted_date, font_size='14px', width='100%', text_align='left', as_="b"),
+            rx.text('👥  ' + ', '.join(names), font_size='14px', width='100%', text_align='left'),
+            rx.text(description, font_size='14px', width='100%', text_align='left'),
+            rx.spacer(),
+            rx.spacer(),
             rx.center(
-            rx.hstack(*avatars),
+                rx.hstack(*avatars),
+            ),
+            rx.center(
+                rx.image(src=picture, width="200px", height="auto")
+            ),
         ),
-        rx.center(
-            rx.image( src="/paneer.png", width="200px", height="auto")
-        ),
-    ),
-    header=rx.heading(f"Lunch @ {restaurant}", size="lg"),
-    footer=rx.heading(formatted_date, size="sm"),
-)
+        width='500px'
+    )
 
 def fetch_events():
     docs = firestore_client.get_all_documents_from_collection("event-logs")
     events = []
     for doc in docs:
         doc["time"] = doc["time"].isoformat()
-        events.append([doc["attendees"], doc["restaurant"], doc["time"]])
+        events.append([doc["attendees"], doc["restaurant"], doc["time"], doc["description"], doc["picture"]])
     return events
