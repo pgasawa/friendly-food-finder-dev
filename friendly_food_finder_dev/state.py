@@ -428,7 +428,7 @@ Response:
         for doc in docs:
             if doc.get("sender") == senderEmail and doc.get("receiver") == self.tokeninfo["email"]:
                 print("MAKE CAL", senderEmail, [self.tokeninfo["email"]], doc.get("startDateTime"), doc.get("location"))
-                GoogleAPI.send_cal_invite(senderEmail, [self.tokeninfo["email"]], doc.get("startDateTime"), doc.get("location"))
+                GoogleAPI.send_cal_invite(senderEmail, [senderEmail, self.tokeninfo["email"]], doc.get("startDateTime"), doc.get("location"))
                 firestore_client.delete_data_from_collection("invites", senderEmail)
             elif doc.get("receiver") == self.tokeninfo["email"]:
                 firestore_client.delete_data_from_collection("invites", doc.get("sender"))
