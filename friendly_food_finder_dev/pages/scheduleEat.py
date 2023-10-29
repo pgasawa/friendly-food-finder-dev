@@ -149,7 +149,7 @@ def scheduleEat() -> rx.Component:
                         rx.text("Location: " + random.choice(["Burma Superstar"])),
                         rx.text("Who's going?"),
                         rx.hstack(
-                            rx.foreach(State.populate_clusters[3:4], lambda cluster: 
+                            rx.foreach(State.populate_clusters[0:1], lambda cluster: 
                                 rx.foreach(cluster, lambda person:
                                     rx.box(
                                         rx.tooltip(
@@ -164,7 +164,7 @@ def scheduleEat() -> rx.Component:
                                 ),
                             ),
                         ),
-                        # rx.button('Join event', color_scheme='whatsapp'),
+                        rx.button('Join event', color_scheme='whatsapp'),
                     ),
                 ),
                 # footer=rx.heading("Footer", size="sm"),
@@ -187,7 +187,7 @@ def scheduleEat() -> rx.Component:
                         rx.text("Location: " + random.choice(["Turtle Tower"])),
                         rx.text("Who's going?"),
                         rx.hstack(
-                            rx.foreach(State.populate_clusters[4:5], lambda cluster: 
+                            rx.foreach(State.populate_clusters[2:3], lambda cluster: 
                                 rx.foreach(cluster, lambda person:
                                     rx.box(
                                         rx.tooltip(
@@ -202,7 +202,7 @@ def scheduleEat() -> rx.Component:
                                 ),
                             ),
                         ),
-                        # rx.button('Join event', color_scheme='whatsapp'),
+                        rx.button('Join event', color_scheme='whatsapp'),
                     ),
                 ),
                 # footer=rx.heading("Footer", size="sm"),
