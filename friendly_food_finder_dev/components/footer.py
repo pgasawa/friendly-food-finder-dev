@@ -22,14 +22,11 @@ def footer_item(text: str, icon: str, url: str) -> rx.Component:
     )
 
     return rx.link(
-        rx.hstack(
+        rx.center(
             rx.image(
                 src=icon,
                 height="2.5em",
                 padding="0.5em",
-            ),
-            rx.text(
-                text,
             ),
             bg=rx.cond(
                 active,
@@ -64,7 +61,7 @@ def footer() -> rx.Component:
         '/eatNow': '/eat_now.png',
         '/feed': '/feed.png',
         '/friends': '/friends.png',
-        '/scheduleEat': '/schedule_eat.png',
+        '/scheduleEat': '/calendar-solid.svg',
         '/settings': '/settings.png',
     }
 
@@ -76,7 +73,7 @@ def footer() -> rx.Component:
                     icon=page.get("image", images[page["route"]]),
                     url=page["route"],
                 )
-                for page in get_decorated_pages() if page.get("title", page["route"].strip("/").capitalize()) not in ["Auth", "Home"]
+                for page in get_decorated_pages() if page.get("title", page["route"].strip("/").capitalize()) not in ["Auth", "Home", "Settings"]
             ],
             width="100%",
             overflow_x="auto",
