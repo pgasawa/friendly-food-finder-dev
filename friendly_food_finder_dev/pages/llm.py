@@ -1,4 +1,5 @@
 import requests
+import random
 
 friend_template = """Friend: {}
 Cuisine Preferences: {}
@@ -39,13 +40,14 @@ def call_together_ai(prompt: str) -> str:
 
     res = requests.post(endpoint, json={
         'model': 'togethercomputer/llama-2-13b-chat',
-        'prompt': prompt
+        'prompt': prompt,
+        'max_tokens': 200,
     }, headers={
         'Authorization': f'Bearer {TOGETHER_API_KEY}',
         'User-Agent': 'Calhacks23'
     })
 
-    return res.json()['choices'][0]['text']
+    return res.json()['output']['choices'][0]['text']
 
 def recommend_restaurants(users, restaurants, top_k=3):
     # 1. Prompt engineering
@@ -73,20 +75,17 @@ def recommend_restaurants(users, restaurants, top_k=3):
 
         cuisine_prefs_str = 'Okay with anything' if len(cuisine_prefs) == 0 else ', '.join(cuisine_prefs)
         dietary_prefs_str = 'Okay with anything' if len(dietary_prefs) == 0 else ', '.join(dietary_prefs)
-        friend_template.format(user['name'], cuisine_prefs_str, dietary_prefs_str, user['budget'])
-        friends_template += friend_template
+        friends_template += friend_template.format(user['name'], cuisine_prefs_str, dietary_prefs_str, user['budget'])
     
     restaurants_template = ""
     for restaurant in restaurants:
-        categories = sum(restaurant['categories'], [])
-        categories = [x['title'] for x in categories]
+        categories = [x['title'] for x in restaurant['categories']]
         categories_str = ', '.join(categories)
-        restaurant_template.format(restaurant['name'], categories_str, restaurant['price'], restaurant['rating'])
-        restaurants_template += restaurant_template
+        restaurants_template += restaurant_template.format(restaurant['name'], categories_str, restaurant['price'], restaurant['rating'])
 
     formatted_prompt = prompt.format(str(top_k), friends_template, restaurants_template)
     
     # 2. Call together.ai endpoint
-    restaurant_names_filtered = set(call_together_ai(formatted_prompt).split(';'))
-    restaurants_filtered = [r for r in restaurants if r['name'] in restaurant_names_filtered]
-    return restaurants_filtered
+    restaurant_names = call_together_ai(formatted_prompt)
+    restaurants_filtered = [r for r in restaurants if r['name'] in restaurant_names]
+    return random.choice(restaurants_filtered)

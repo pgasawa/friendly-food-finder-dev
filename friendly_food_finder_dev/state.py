@@ -11,9 +11,10 @@ import json
 import time
 import math
 import random
-import requests
+from datetime import datetime, timedelta
 
 from friendly_food_finder_dev.GoogleAPI import does_user_have_conflict
+from friendly_food_finder_dev.pages.llm import recommend_restaurants
 
 from google.auth.transport import requests as googlerequests
 from google.oauth2.id_token import verify_oauth2_token
@@ -58,7 +59,9 @@ class State(rx.State):
                 'mediterranean': False,
                 'italian': False,
                 'budget': '$',
-                'friends': []
+                'friends': [],
+                'latitude': 37.7845607111444,
+                'longitude': -122.40337703253672
             }
             firestore_client.write_data_to_collection('user', self.tokeninfo['email'], user_doc)
         
@@ -142,7 +145,7 @@ class State(rx.State):
         friend_name = friend_doc['name']
         user_doc_name = self.tokeninfo["email"]
         user_docref = firestore_client.db.collection("user").document(user_doc_name)
-        user_docref.update({"friends": ArrayUnion([{self.user_add_friend_email: {'closeness': "Hella tight"}}])})
+        user_docref.update({"friends": ArrayUnion([{self.user_add_friend_email: {'closeness': "Hella tight", 'last_hangout': random.randint(1, 23)}}])})
 
     @rx.var
     def all_friends(self) -> List[dict[str, str]]:
@@ -150,6 +153,12 @@ class State(rx.State):
         user_docs = []
         for friend_doc in friend_docs:
             user_doc = firestore_client.read_from_document('user', friend_doc['requestee'])
+            
+            friend_data = firestore_client.read_from_document("user", self.tokeninfo.get('email'))["friends"]
+            for i in range(len(friend_data)):
+                if user_doc['email'] in friend_data[i]:
+                    user_doc["last_hangout"] = friend_data[i][user_doc['email']]["last_hangout"]
+                    break
             user_docs.append(user_doc)
         return user_docs
     
@@ -223,8 +232,8 @@ class State(rx.State):
             )
             return result
         except Exception as exc:
-            if self.id_token_json:
-                print(f"Error verifying token: {exc}")
+            self.id_token_json = ""
+            print(f"Error verifying token: {exc}")
         return {}
 
     def logout(self):
@@ -266,6 +275,15 @@ class State(rx.State):
         distance = earth_radius * c
 
         return distance
+    
+    def calculate_time(self, lat1, lon1, lat2, lon2, speed=1.352, round=1):
+        """
+        speed = m/s walk
+        """
+        meter_distance = self.haversine(lat1, lon1, lat2, lon2)
+        print("Meter", meter_distance)
+        time_needed = ((meter_distance / speed / 60) // round) * round + round
+        return int(time_needed)
 
     def get_free_friends(self):
         if 'email' not in self.tokeninfo:
@@ -285,6 +303,8 @@ class State(rx.State):
         if self.id_token_json == "":
             return []
         friends = self.get_free_friends()
+        if self.id_token_json == "":
+            return []
         
         radius = 600
         
@@ -295,18 +315,19 @@ class State(rx.State):
         # get_nearby_restaurants(user, radius)
 
         price_set = ["$", "$$", "$$$", "$$$$"]
-        print("HFIUWEHFIU", price_set)
 
         viable_list = [x for x in viable_list if x.get("price") in price_set]
         possible_meals = {}
+        friend_info = {}
 
         for friend in friends:
+            friend_info[friend.get('email')] = friend
             intersection = [dict1 for dict1 in viable_list for dict2 in viable_list if dict1.get("name") == dict2.get("name")]
             if intersection:
-                possible_meals[friend.get('name')] = intersection
+                possible_meals[friend.get('email')] = intersection
 
         for friend in friends:
-            possible_meals[friend.get('name')] = viable_list
+            possible_meals[friend.get('email')] = viable_list
 
         keys = list(possible_meals.keys())
         random.shuffle(keys)
@@ -317,10 +338,36 @@ class State(rx.State):
             items = possible_meals[key]
             if len(items) == 0:
                 return []
-            selected_item = random.choice(items)
-            selected_suggestions.append((key, selected_item.get('name'), selected_item.get('url'), selected_item.get('price'), selected_item.get('image_url')))
+            # selected_item = random.choice(items)
+            users = [user, firestore_client.read_from_document('user', key)]
+            selected_item = recommend_restaurants(users, items, top_k=1)
 
-        print(selected_suggestions)
+            friend = friend_info[key]
+
+            userLat, userLong = user.get("latitude"), user.get("longitude")
+            friendLat, friendLong = friend.get("latitude"), friend.get("longitude")
+            restLat, restLong = selected_item.get("coordinates").get("latitude"), selected_item.get("coordinates").get("longitude")
+            
+            yourDistance = self.calculate_time(userLat, userLong, restLat, restLong)
+            friendDistance = self.calculate_time(friendLat, friendLong, restLat, restLong)
+
+            print(datetime.now())
+            print(datetime.now() + timedelta(minutes=max(yourDistance, friendDistance)))
+            earliestDateTime = datetime.now() + timedelta(minutes=max(yourDistance, friendDistance))
+            # addMinutes = (int(earliestDateTime.strftime("%M")) % 5 + 4) // 5 * 5 - int(earliestDateTime.strftime("%M"))
+            addMinutes = 5 # RNG
+            print(earliestDateTime)
+            print(addMinutes)
+            startDateTime = earliestDateTime + timedelta(minutes=addMinutes)
+            endDateTime = startDateTime + timedelta(hours=1)
+
+            print(startDateTime.strftime("%I:%M %p"))
+            print(endDateTime.strftime("%I:%M %p"))
+
+            selected_suggestions.append((friend.get("name"), selected_item.get('name'), selected_item.get('url'), selected_item.get('price'), selected_item.get('image_url'), 
+                                         str(yourDistance), str(max(yourDistance, friendDistance)), startDateTime.strftime("%I:%M %p"), endDateTime.strftime("%I:%M %p")))
+
+        # print(selected_suggestions)
         return selected_suggestions
 
     def get_nearby_restaurants(self, user, radius=600):

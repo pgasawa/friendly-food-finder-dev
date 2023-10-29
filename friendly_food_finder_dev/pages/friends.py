@@ -30,7 +30,7 @@ def friends() -> rx.Component:
 
 def friendComponent(friend):
     options = ["Hella tight", "Kinda close", "Lowkey chill"]
-
+    
     return rx.hstack(
         rx.image(
             src=friend['picture'], width="100px", height="auto", border_radius="50%",
@@ -44,6 +44,7 @@ def friendComponent(friend):
                     value, friend["email"]
                 ),
             ),
+            rx.text("Hung out " + friend["last_hangout"] + " days ago"),
             padding_bottom="20px"
         ),
         rx.spacer()
