@@ -37,9 +37,14 @@ def eatNow() -> rx.Component:
                             ),
                             rx.text(meal[3]),
                         ),
-                        rx.text(meal[5] + " minutes away"),
-                        rx.button("Invite!", on_click=lambda: State.invite(0, 0, 0)),
-                        rx.text("Schedule for " + meal[7] + " to " + meal[8]),
+                        rx.text(meal[5] + " minute(s) away"),
+                        rx.button(rx.cond(meal[12], "Invited! ✔️", "Invite"), 
+                                  is_disabled=rx.cond(meal[12], True, False),
+                                  on_click=lambda: State.invite(meal[1], meal[0], meal[10], meal[6], meal[8], meal[9], meal[11], meal[4], meal[5], meal[3], meal[2])
+                                ), # Xd
+                        
+                        rx.text("Schedule for " + meal[8] + " to " + meal[9]),
+                        # rx.image(src=folium.Marker([meal[1].get('coordinates').get('latitude'), meal[1].get('coordinates').get('longitude')], tooltip=meal[1].get("mame")).add_to(folium.Map(location=[meal[1].get('coordinates').get('latitude'), meal[1].get('coordinates').get('longitude')], zoom_start=15)).get_root().render(), width="300px", height="300px"),
                         rx.image(src=meal[4], width="300px", height="250px"),
                     ),
             ))

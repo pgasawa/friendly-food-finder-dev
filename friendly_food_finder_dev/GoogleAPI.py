@@ -63,16 +63,19 @@ def send_cal_invite(organizerEmail: str, attendeeEmails: List[str], startTime: s
     user_doc = firestore_client.read_from_document('user', organizerEmail)
     creds = Credentials.from_authorized_user_info(json.loads(user_doc['token']), SCOPES)
     service = build('calendar', 'v3', credentials=creds)
+
+    start_datetime = datetime.fromisoformat(startTime)
+
     event = {
         'summary': 'Lunch! ',
         'location': location,
         'description': 'Time to eat.',
         'start': {
-            'dateTime': startTime,
+            'dateTime': start_datetime.isoformat(),
             'timeZone': 'America/Los_Angeles',
         },
         'end': {
-            'dateTime': startTime + timedelta(hours=1),
+            'dateTime': (start_datetime + timedelta(hours=1)).isoformat(),
             'timeZone': 'America/Los_Angeles',
         },
         'attendees': [

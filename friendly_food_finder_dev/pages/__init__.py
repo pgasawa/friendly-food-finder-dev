@@ -6,3 +6,4 @@ from .scheduleEat import scheduleEat
 from .auth import auth
 from .profile import profile
 from .cluster import cluster
+from .notifications import notifications

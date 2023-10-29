@@ -15,7 +15,7 @@ from datetime import datetime, timedelta
 import requests
 
 from friendly_food_finder_dev.GoogleAPI import does_user_have_conflict
-from friendly_food_finder_dev.pages.llm import recommend_restaurants
+from friendly_food_finder_dev.pages.llm import recommend_restaurants, collect_cuisine_prefs, collect_dietary_prefs, call_together_ai
 
 from google.auth.transport import requests as googlerequests
 from google.oauth2.id_token import verify_oauth2_token
@@ -25,9 +25,9 @@ from . import GoogleAPI
 CLIENT_ID = "419615612188-fupdhp748n09ba2ibt0qi9633lk1pkhp.apps.googleusercontent.com"
 
 expected_last_hangout = {
-    'Hella tight': 7,
-    'Kinda close': 14,
-    'Lowkey chill': 21
+    'Hella tight': 14,
+    'Kinda close': 21,
+    'Lowkey chill': 30
 }
 
 class State(rx.State):
@@ -141,18 +141,47 @@ class State(rx.State):
         print(self.tokeninfo)
         pass
 
+    def friend_insight(self, user, friend):
+        prompt = """Instruction:
+I'm building a social networking app for friends to hangout together and get food. Here is the signed in user's preferences:
+Cuisine Preferences - {}
+Dietary Preferences - {}
+
+And here is their friend's preferences (name: {}):
+Cuisine Preferences - {}
+Dietary Preferences - {}
+
+Write a small message, less than 15 words, describing an insight about how they are similar. Address the signed in user as "you". Don't include anything in your response except the message itself. Add a food emoji at the beginning of the message that's relevant to the cuisine/dietary preferences being described. It must be no less than 15 words - this is very important!
+---
+Response:
+"""
+
+        formatted_prompt = prompt.format(
+            collect_cuisine_prefs(user),
+            collect_dietary_prefs(user),
+            friend['name'].split(' ')[0],
+            collect_cuisine_prefs(friend),
+            collect_dietary_prefs(friend)
+        )
+
+        return call_together_ai(formatted_prompt)
+
     def user_add_friend(self):
         friend_doc = firestore_client.read_from_document('user', self.user_add_friend_email)
         if friend_doc is None:
             return rx.window_alert('No user exists with this email!')
+        friend_name = friend_doc['name']
+        user_doc_name = self.tokeninfo["email"]
+        user_docref = firestore_client.db.collection("user").document(user_doc_name)
+        user_docref.update({"friends": ArrayUnion([{self.user_add_friend_email: {
+            'closeness': "Hella tight",
+            'last_hangout': 0,
+            'similarities': self.friend_insight(self.user_doc, friend_doc),
+        }}])})
         firestore_client.write_data_to_collection('friend', str(uuid.uuid1()), {
             'requester': self.tokeninfo['email'],
             'requestee': self.user_add_friend_email,
         })
-        friend_name = friend_doc['name']
-        user_doc_name = self.tokeninfo["email"]
-        user_docref = firestore_client.db.collection("user").document(user_doc_name)
-        user_docref.update({"friends": ArrayUnion([{self.user_add_friend_email: {'closeness': "Hella tight", 'last_hangout': random.randint(1, 23)}}])})
         print("Success!")
 
     @rx.var
@@ -167,6 +196,7 @@ class State(rx.State):
                 if user_doc['email'] in friend_data[i]:
                     user_doc["last_hangout"] = friend_data[i][user_doc['email']]["last_hangout"]
                     user_doc["closeness"] = friend_data[i][user_doc['email']]["closeness"]
+                    user_doc["similarities"] = friend_data[i][user_doc['email']]["similarities"]
                     break
 
             if expected_last_hangout[user_doc["closeness"]] <= user_doc["last_hangout"]:
@@ -197,7 +227,7 @@ class State(rx.State):
         friend_data = firestore_client.read_from_document("user", user_doc_name)["friends"]
         for i in range(len(friend_data)):
             if friend_email in friend_data[i]:
-                friend_data[i][friend_email] = {"closeness": option}
+                friend_data[i][friend_email]['closeness'] = option
         user_docref = firestore_client.db.collection("user").document(user_doc_name)
         user_docref.update({"friends": friend_data})
 
@@ -313,12 +343,98 @@ class State(rx.State):
     @rx.var
     def current_path(self):
         return self.get_current_page()
+    
+    def invite(self, location, friendName, friendEmail, friendDistance, startTime, endTime, selfName, locationImage, selfDistance, expensiveness, locationurl, startDateTime):
+        # Make sure the sender doesn't have an active invite already.
+        if self.id_token_json == "":
+            return None
+        
+        docs = firestore_client.get_all_documents_from_collection("invites")
+        for doc in docs:
+            if doc.get("sender") == self.tokeninfo["email"]:
+                return
+        
+        invite_info = {
+            'sender': self.tokeninfo["email"],
+            'senderName': selfName,
+            'receiver': friendEmail,
+            'receiverName': friendName,
+            'location': location,
+            'locationurl': locationurl,
+            'locationImage': locationImage,
+            'senderTimeDistance': selfDistance,
+            'expensiveness': expensiveness,
+            'recieverTimeDistance': friendDistance,
+            'startTime': startTime,
+            'endTime': endTime,
+            'startDateTime': startDateTime.isoformat()+'Z',
+        }
+        firestore_client.write_data_to_collection('invites', self.tokeninfo['email'], invite_info)
+
+    @rx.cached_var
+    def incoming_invites(self) -> List[tuple[str, str, str]]:
+        if self.id_token_json == "":
+            return []
+        
+        invites = []
+        docs = firestore_client.get_all_documents_from_collection("invites")
+        for doc in docs:
+            if doc.get("receiver") == self.tokeninfo["email"]:
+                invites.append((doc.get("receiverName"), doc.get("location"), doc.get("locationurl"), 
+                            doc.get("expensiveness"), doc.get("locationImage"), 
+                            doc.get("senderTimeDistance"), doc.get("recieverTimeDistance"), max(doc.get("senderTimeDistance"), doc.get("recieverTimeDistance")),
+                            doc.get("startTime"), doc.get("endTime"), 
+                            doc.get("receiver"), doc.get("senderName"), doc.get("sender"), False, False))
+        print(invites)
+        return invites
+
+    @rx.cached_var
+    def number_of_incoming_invite(self):
+        if self.id_token_json == "":
+            return []
+        
+        count = 0
+        docs = firestore_client.get_all_documents_from_collection("invites")
+        for doc in docs:
+            if doc.get("receiver") == self.tokeninfo["email"]:
+                count += 1
+        return count
+    
+    def decline_incoming_invite(self, senderEmail):
+        if self.id_token_json == "":
+            return None
+        
+        docs = firestore_client.get_all_documents_from_collection("invites")
+        for doc in docs:
+            if doc.get("sender") == senderEmail and doc.get("receiver") == self.tokeninfo["email"]:
+                firestore_client.delete_data_from_collection("invites", senderEmail)
+
+    def accept_incoming_invite(self, senderEmail):
+        if self.id_token_json == "":
+            return None
+
+        docs = firestore_client.get_all_documents_from_collection("invites")
+        for doc in docs:
+            if doc.get("sender") == senderEmail and doc.get("receiver") == self.tokeninfo["email"]:
+                GoogleAPI.send_cal_invite(senderEmail, self.tokeninfo["email"], doc.get("startDateTime"), doc.get("location"))
+                firestore_client.delete_data_from_collection("invites", senderEmail)
+            elif doc.get("receiver") == self.tokeninfo["email"]:
+                firestore_client.delete_data_from_collection("invites", doc.get("sender"))
 
     @rx.cached_var
     def possible_meals(self) -> List[tuple[str, str, str]]:
         if self.current_path != "/eatNow":
             return []
         else:
+            docs = firestore_client.get_all_documents_from_collection("invites")
+            for doc in docs:
+                if doc.get("sender") == self.tokeninfo["email"]:
+                    return [(doc.get("receiverName"), doc.get("location"), doc.get("locationurl"), 
+                            doc.get("expensiveness"), doc.get("locationImage"), 
+                            doc.get("senderTimeDistance"), doc.get("recieverTimeDistance"), max(doc.get("senderTimeDistance"), doc.get("recieverTimeDistance")),
+                            doc.get("startTime"), doc.get("endTime"), 
+                            doc.get("reciever"), doc.get("senderName"), True)]
+
             if 'email' not in self.tokeninfo:
                 return []
             if self.id_token_json == "":
@@ -385,8 +501,11 @@ class State(rx.State):
                 print(startDateTime.strftime("%I:%M %p"))
                 print(endDateTime.strftime("%I:%M %p"))
 
-                selected_suggestions.append((friend.get("name"), selected_item.get('name'), selected_item.get('url'), selected_item.get('price'), selected_item.get('image_url'), 
-                                            str(yourDistance), str(max(yourDistance, friendDistance)), startDateTime.strftime("%I:%M %p"), endDateTime.strftime("%I:%M %p")))
+                selected_suggestions.append((friend.get("name"), selected_item.get('name'), selected_item.get('url'), 
+                                             selected_item.get('price'), selected_item.get('image_url'), 
+                                            str(yourDistance), str(friendDistance), str(max(yourDistance, friendDistance)),
+                                            startDateTime.strftime("%I:%M %p"), endDateTime.strftime("%I:%M %p"), 
+                                            key, user.get("name"), False, startDateTime))
 
             # print(selected_suggestions)
             return selected_suggestions

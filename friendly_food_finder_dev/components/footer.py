@@ -31,7 +31,7 @@ def footer_item(text: str, icon: str, url: str) -> rx.Component:
             bg=rx.cond(
                 active,
                 styles.accent_color,
-                "transparent",
+                "#D2F0FC",
             ),
             color=rx.cond(
                 active,
@@ -63,7 +63,15 @@ def footer() -> rx.Component:
         '/friends': '/friends.png',
         '/scheduleEat': '/calendar-solid.svg',
         '/settings': '/settings.png',
+        '/notifications': '/bell.png',
     }
+
+    decorated_pages = []
+    for pageTitle in ["Feed", "Friends", "Eat Now", "Schedule Eat", "Notifications"]:
+        for page in get_decorated_pages():
+            if page.get("title") == pageTitle:
+                decorated_pages.append(page)
+                break
 
     return rx.box(
         rx.hstack(
@@ -73,7 +81,7 @@ def footer() -> rx.Component:
                     icon=page.get("image", images[page["route"]]),
                     url=page["route"],
                 )
-                for page in get_decorated_pages() if page.get("title", page["route"].strip("/").capitalize()) not in ["Auth", "Home", "Settings"]
+                for page in decorated_pages if page.get("title", page["route"].strip("/").capitalize()) not in ["Auth", "Home", "Settings"]
             ],
             width="100%",
             overflow_x="auto",
@@ -88,5 +96,5 @@ def footer() -> rx.Component:
         position="fixed",
         bottom="0px",
         border_top=styles.border,
-        background_color="#D2F0FC",
+        background_color="#cdedfa",
     )
