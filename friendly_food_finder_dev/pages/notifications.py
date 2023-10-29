@@ -23,7 +23,7 @@ def notifications() -> rx.Component:
             rx.foreach(State.incoming_invites,
                 lambda invite: rx.card(
                     rx.vstack(
-                        rx.heading(invite[12]),
+                        rx.heading(invite[11]),
                         rx.hstack(
                             rx.link(
                                 rx.text(invite[1]),
