@@ -31,7 +31,7 @@ def footer_item(text: str, icon: str, url: str) -> rx.Component:
             bg=rx.cond(
                 active,
                 styles.accent_color,
-                "transparent",
+                "#D2F0FC",
             ),
             color=rx.cond(
                 active,
@@ -89,5 +89,5 @@ def footer() -> rx.Component:
         position="fixed",
         bottom="0px",
         border_top=styles.border,
-        background_color="#D2F0FC",
+        background_color="#cdedfa",
     )
