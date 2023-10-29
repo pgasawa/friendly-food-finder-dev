@@ -44,7 +44,8 @@ def friendComponent(friend):
                     value, friend["email"]
                 ),
             ),
-            rx.text("Hung out " + friend["last_hangout"] + " days ago"),
+            rx.text("🕒 Hung out " + friend["last_hangout"] + " days ago", font_size='12px', width='200px', text_align='left'),
+            rx.text(friend['friendship_insight'], font_size='12px', width='200px', text_align='left'),
             padding_bottom="20px"
         ),
         rx.spacer()
