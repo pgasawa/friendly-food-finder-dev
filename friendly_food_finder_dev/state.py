@@ -223,8 +223,8 @@ class State(rx.State):
             )
             return result
         except Exception as exc:
-            if self.id_token_json:
-                print(f"Error verifying token: {exc}")
+            self.id_token_json = ""
+            print(f"Error verifying token: {exc}")
         return {}
 
     def logout(self):
@@ -268,8 +268,8 @@ class State(rx.State):
         return distance
 
     def get_free_friends(self):
-        print("SLEEP", self.id_token_json)
-        print("SELF", self.tokeninfo)
+        # print("SLEEP", self.id_token_json)
+        # print("SELF", self.tokeninfo)
         friend_emails = [list(x.keys())[0] for x in firestore_client.read_from_document('user', self.tokeninfo["email"]).get('friends')]
         friends = [firestore_client.read_from_document('user', friend_email) for friend_email in friend_emails]
         friends = [friend for friend in friends if not does_user_have_conflict(friend['email'], 0, 1)]
@@ -281,6 +281,8 @@ class State(rx.State):
         if self.id_token_json == "":
             return []
         friends = self.get_free_friends()
+        if self.id_token_json == "":
+            return []
         
         radius = 600
         
@@ -314,9 +316,13 @@ class State(rx.State):
             if len(items) == 0:
                 return []
             selected_item = random.choice(items)
+            print("Your LatLong", user.get("latitude"), user.get("longitude"))
+            print("Other Person", key)
+            print("LatLong", selected_item.get("coordinates").get("latitude"), selected_item.get("coordinates").get("longitude"))
+            
             selected_suggestions.append((key, selected_item.get('name'), selected_item.get('url'), selected_item.get('price'), selected_item.get('image_url')))
 
-        print(selected_suggestions)
+        # print(selected_suggestions)
         return selected_suggestions
 
     def get_nearby_restaurants(self, user, radius=600):
