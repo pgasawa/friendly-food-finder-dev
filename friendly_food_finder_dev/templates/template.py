@@ -44,7 +44,7 @@ def menu_button() -> rx.Component:
                         )
                     )
                     for page in get_decorated_pages() if 
-                    page.get("title", page["route"].strip("/").capitalize()) not in ["Home", "Eat Now", "Feed", "Friends", "Schedule Eat", "Auth"]
+                    page.get("title", page["route"].strip("/").capitalize()) not in ["Home", "Eat Now", "Feed", "Friends", "Schedule Eat", "Auth", "Notifications"]
                 ]
             ),
         ),
