@@ -49,26 +49,30 @@ def profile() -> rx.Component:
     """
 
     return rx.vstack(
-        rx.heading("Profile", font_size="3em"),
+        rx.heading("Settings", font_size="3em"),
+        rx.spacer(),
+        rx.spacer(),
         rx.image(
-            src=State.tokeninfo['picture'], width="100px", height="auto"
+            src=State.tokeninfo['picture'], width="150px", height="auto", border_radius="50%",
+            padding_right="25px", padding_bottom="25px"
         ),
+        rx.spacer(),
         rx.table_container(
             rx.table(
                 rows=[
                     ("Name", State.tokeninfo['name']),
                     ("Email", State.tokeninfo['email']),
                     ("Dietary Preferences", rx.vstack(
-                        rx.switch('Vegetarian', is_checked=State.update_vegetarian, on_change=State.set_update_vegetarian),
-                        rx.switch('Vegan', is_checked=State.update_vegan, on_change=State.set_update_vegan),
+                        rx.switch('Vegetarian', is_checked=State.update_vegetarian, on_change=State.set_update_vegetarian, width='100px', color_scheme='green'),
+                        rx.switch('Vegan', is_checked=State.update_vegan, on_change=State.set_update_vegan, width='100px', color_scheme='green'),
                     )),
                     ("Cuisine Preferences", rx.vstack(
-                        rx.switch('South Asian', is_checked=State.update_south_asian, on_change=State.set_update_south_asian),
-                        rx.switch('East Asian', is_checked=State.update_east_asian, on_change=State.set_update_east_asian),
-                        rx.switch('American', is_checked=State.update_american, on_change=State.set_update_american),
-                        rx.switch('Mexican', is_checked=State.update_mexican, on_change=State.set_update_mexican),
-                        rx.switch('Mediterranean', is_checked=State.update_mediterranean, on_change=State.set_update_mediterranean),
-                        rx.switch('Italian', is_checked=State.update_italian, on_change=State.set_update_italian),
+                        rx.switch('South Asian', is_checked=State.update_south_asian, on_change=State.set_update_south_asian, width='100px', color_scheme='green'),
+                        rx.switch('East Asian', is_checked=State.update_east_asian, on_change=State.set_update_east_asian, width='100px', color_scheme='green'),
+                        rx.switch('American', is_checked=State.update_american, on_change=State.set_update_american, width='100px', color_scheme='green'),
+                        rx.switch('Mexican', is_checked=State.update_mexican, on_change=State.set_update_mexican, width='100px', color_scheme='green'),
+                        rx.switch('Mediterranean', is_checked=State.update_mediterranean, on_change=State.set_update_mediterranean, width='100px', color_scheme='green'),
+                        rx.switch('Italian', is_checked=State.update_italian, on_change=State.set_update_italian, width='100px', color_scheme='green'),
                     )),
                     ("Budget per meal", rx.select(
                         budget_options,
@@ -78,16 +82,22 @@ def profile() -> rx.Component:
                 ],
             )
         ),
-        rx.button("Save Changes", on_click=lambda: State.update_profile({
-            'vegetarian': State.update_vegetarian,
-            'vegan': State.update_vegan,
-            'south_asian': State.update_south_asian,
-            'east_asian': State.update_east_asian,
-            'american': State.update_american,
-            'mexican': State.update_mexican,
-            'mediterranean': State.update_mediterranean,
-            'italian': State.update_italian,
-            'budget': State.update_budget
-        })),
-        rx.button("Logout", on_click=State.logout),
+        rx.spacer(),
+        rx.hstack(
+            rx.button("Save Changes", on_click=lambda: State.update_profile({
+                'vegetarian': State.update_vegetarian,
+                'vegan': State.update_vegan,
+                'south_asian': State.update_south_asian,
+                'east_asian': State.update_east_asian,
+                'american': State.update_american,
+                'mexican': State.update_mexican,
+                'mediterranean': State.update_mediterranean,
+                'italian': State.update_italian,
+                'budget': State.update_budget
+            }), bg='#e3fc9d', color='black'),
+            rx.button("Sign Out", on_click=State.logout),
+        ),
+        rx.spacer(),
+        rx.spacer(),
+        rx.spacer()
     )

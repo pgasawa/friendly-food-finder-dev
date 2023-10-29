@@ -73,7 +73,7 @@ def footer() -> rx.Component:
     }
 
     decorated_pages = []
-    for pageTitle in ["Feed - OmNom", "Friends - OmNom", "Eat Now - OmNom", "Schedule Eat - OmNom", "Notifications - OmNom"]:
+    for pageTitle in ["Feed - OmNom", "Friends - OmNom", "Eat Now - OmNom", "Schedule Eat - OmNom", "Notifications - OmNom", "Settings - OmNom"]:
         for page in get_decorated_pages():
             if page.get("title") == pageTitle:
                 decorated_pages.append(page)
@@ -87,7 +87,7 @@ def footer() -> rx.Component:
                     icon=page.get("image", rx.cond((State.number_of_incoming_invite > 0) & (page["route"] == "/notifications"), images[page["route"] + "2"], images[page["route"]])),
                     url=page["route"],
                 )
-                for page in decorated_pages if page.get("title", page["route"].strip("/").capitalize()) not in ["Auth - OmNom", "Home - OmNom", "Settings - OmNom"]
+                for page in decorated_pages if page.get("title", page["route"].strip("/").capitalize()) not in ["Auth - OmNom", "Home - OmNom"]
             ],
             width="100%",
             overflow_x="auto",

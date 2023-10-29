@@ -129,7 +129,6 @@ def template(
                         **styles.template_page_style,
                     ),
                     rx.spacer(),
-                    menu_button(),
                     logo(),
                     align_items="flex-start",
                     transition="left 0.5s, width 0.5s",
