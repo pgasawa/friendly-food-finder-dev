@@ -206,7 +206,7 @@ Response:
                     user_doc["closeness"] = friend_data[i][user_doc['email']]["closeness"]
                     user_doc["similarities"] = friend_data[i][user_doc['email']]["similarities"]
                     break
-
+            
             if expected_last_hangout[user_doc["closeness"]] <= user_doc["last_hangout"]:
                 friendship_insight = "💡 It's been a while since you both hung out, so we'll recommend a hangout with {} soon!".format(user_doc['name'].split(' ')[0])
             else:
