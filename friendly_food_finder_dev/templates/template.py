@@ -54,6 +54,30 @@ def menu_button() -> rx.Component:
         z_index="500",
     )
 
+def logo() -> rx.Component:
+    return rx.box(
+        rx.hstack(
+            rx.image(
+                src="/omnom_loading.gif",
+                width="64px",
+                height="auto"
+            ),
+            rx.heading(
+                "OmNom",
+                font_family="Futura Extra Bold",
+                color="#b0d644",
+                font_size="1.5em"
+            )
+        ),
+        box_shadow="md",
+        border_radius="20px",
+        padding="0.25em 1em",
+        position="fixed",
+        left="1.5em",
+        top="1.5em",
+        z_index="500",
+    )
+
 
 def template(
     route: str | None = None,
@@ -109,6 +133,7 @@ def template(
                     ),
                     rx.spacer(),
                     menu_button(),
+                    logo(),
                     align_items="flex-start",
                     transition="left 0.5s, width 0.5s",
                     position="sticky",
