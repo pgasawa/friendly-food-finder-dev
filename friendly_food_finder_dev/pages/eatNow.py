@@ -25,6 +25,7 @@ def eatNow() -> rx.Component:
     Returns:
         The UI for the eatNow page.
     """
+    
     return rx.vstack(
         rx.heading("Eat Now!", font_size="3em"),
         rx.text("Time to spontaneously eat!"),
@@ -61,23 +62,6 @@ def eatNow() -> rx.Component:
                         rx.image(src=meal[4], width="300px", height="250px"),
                     ),
             ))
-                # rx.card(
-                #     rx.vstack(
-                #         rx.heading(meal[0]),
-                #         rx.button("Invite!", on_click=lambda: State.invite(0, 0, 0)),
-                #         rx.hstack(
-                #             rx.link(
-                #                 rx.text(meal[1].get("name")),
-                #                 href=meal[1].get("url"),
-                #                 color="rgb(2,133,194)",
-                #             ),
-                #             rx.text(meal[1].get("price")),
-                #         ),
-                #         # rx.image(src=folium.Marker([meal[1].get('coordinates').get('latitude'), meal[1].get('coordinates').get('longitude')], tooltip=meal[1].get("mame")).add_to(folium.Map(location=[meal[1].get('coordinates').get('latitude'), meal[1].get('coordinates').get('longitude')], zoom_start=15)).get_root().render(), width="300px", height="300px"),
-                #         rx.image(src=meal[1].get("image_url"), width="300px", height="250px"),
-                #     ),
-                # )
-                # for meal in State.possible_meals
         )
     )
 
