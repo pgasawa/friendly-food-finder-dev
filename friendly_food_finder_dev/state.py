@@ -507,9 +507,9 @@ Response:
                 items = possible_meals[key]
                 if len(items) == 0:
                     return []
-                # selected_item = random.choice(items)
-                users = [user, firestore_client.read_from_document('user', key)]
-                selected_item = recommend_restaurants(users, items, top_k=1)
+                selected_item = random.choice(items)
+                # users = [user, firestore_client.read_from_document('user', key)]
+                # selected_item = recommend_restaurants(users, items, top_k=1)
 
                 friend = friend_info[key]
 
