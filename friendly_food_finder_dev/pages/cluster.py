@@ -9,7 +9,7 @@ def get_all_users():
     user_docs = firestore_client.get_all_documents_from_collection("users")
     return user_docs
 
-closeness_to_weight = {"Hella tight": 5, "Kinda close": 3, "Lowkey chill": 1}
+closeness_to_weight = {"Close Friend": 5, "Friend": 3, "Acquaintance": 1}
 budget_to_weight = {"$$$$": 4, "$$$": 3, "$$": 2, "$": 1}
 
 class Scheduler:

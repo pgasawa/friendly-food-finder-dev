@@ -34,7 +34,7 @@ def friends() -> rx.Component:
     )
 
 def friendComponent(friend):
-    options = ["Hella tight", "Kinda close", "Lowkey chill"]
+    options = ["Close Friend", "Friend", "Acquaintance"]
     
     return rx.hstack(
         rx.image(

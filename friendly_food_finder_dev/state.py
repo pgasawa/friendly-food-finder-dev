@@ -26,9 +26,9 @@ from . import GoogleAPI
 CLIENT_ID = "419615612188-fupdhp748n09ba2ibt0qi9633lk1pkhp.apps.googleusercontent.com"
 
 expected_last_hangout = {
-    'Hella tight': 14,
-    'Kinda close': 21,
-    'Lowkey chill': 30
+    'Close Friend': 14,
+    'Friend': 21,
+    'Acquaintance': 30
 }
 
 class State(rx.State):
