@@ -293,7 +293,7 @@ class State(rx.State):
         
         friend_emails = [list(x.keys())[0] for x in user.get('friends')]
         friends = [firestore_client.read_from_document('user', friend_email) for friend_email in friend_emails]
-        friends = [friend for friend in friends if not does_user_have_conflict(friend['email'], 0, 1)]
+        friends = [friend for friend in friends if not does_user_have_conflict(friend, 0, 1)]
         friends = [friend for friend in friends if self.haversine(37.7845607111444, -122.40337703253672, friend['latitude'], friend['longitude']) < 1000]
         return friends
 
