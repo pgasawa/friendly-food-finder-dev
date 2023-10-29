@@ -66,6 +66,13 @@ def footer() -> rx.Component:
         '/notifications': '/bell.png',
     }
 
+    decorated_pages = []
+    for pageTitle in ["Feed", "Friends", "Eat Now", "Schedule Eat", "Notifications"]:
+        for page in get_decorated_pages():
+            if page.get("title") == pageTitle:
+                decorated_pages.append(page)
+                break
+
     return rx.box(
         rx.hstack(
             *[
@@ -74,7 +81,7 @@ def footer() -> rx.Component:
                     icon=page.get("image", images[page["route"]]),
                     url=page["route"],
                 )
-                for page in get_decorated_pages() if page.get("title", page["route"].strip("/").capitalize()) not in ["Auth", "Home", "Settings"]
+                for page in decorated_pages if page.get("title", page["route"].strip("/").capitalize()) not in ["Auth", "Home", "Settings"]
             ],
             width="100%",
             overflow_x="auto",
