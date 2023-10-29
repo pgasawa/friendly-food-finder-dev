@@ -345,11 +345,12 @@ class State(rx.State):
         docs = firestore_client.get_all_documents_from_collection("invites")
         for doc in docs:
             if doc.get("receiver") == self.tokeninfo["email"]:
-                invites.append((doc.get("friendName"), doc.get("location"), doc.get("locationurl"), 
+                invites.append((doc.get("receiverName"), doc.get("location"), doc.get("locationurl"), 
                             doc.get("expensiveness"), doc.get("locationImage"), 
                             doc.get("senderTimeDistance"), doc.get("recieverTimeDistance"), max(doc.get("senderTimeDistance"), doc.get("recieverTimeDistance")),
                             doc.get("startTime"), doc.get("endTime"), 
-                            doc.get("reciever"), doc.get("senderName"), False))
+                            doc.get("receiver"), doc.get("senderName"), False))
+        print(invites)
         return invites
 
     @rx.cached_var

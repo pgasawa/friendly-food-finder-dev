@@ -63,6 +63,7 @@ def footer() -> rx.Component:
         '/friends': '/friends.png',
         '/scheduleEat': '/calendar-solid.svg',
         '/settings': '/settings.png',
+        '/notifications': '/bell.png',
     }
 
     return rx.box(
