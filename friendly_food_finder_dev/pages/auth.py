@@ -61,7 +61,7 @@ def auth() -> rx.Component:
         The UI for the auth page.
     """
     return rx.vstack(
-        rx.heading("Auth", font_size="3em"),
+        rx.heading("Auth", font_size="3em", font_family="Futura Extra Bold"),
         rx.text(f"Welcome to auth, {State.tokeninfo['name']}!"),
         rx.button("Logout", on_click=State.logout)
     ) 
