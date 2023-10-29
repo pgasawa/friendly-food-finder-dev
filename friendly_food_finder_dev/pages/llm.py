@@ -16,6 +16,30 @@ def call_together_ai(prompt: str) -> str:
 
     return res.json()['output']['choices'][0]['text']
 
+def collect_dietary_prefs(user):
+    dietary_prefs = []
+    if user["vegetarian"]:
+        dietary_prefs.append("Vegetarian")
+    if user["vegan"]:
+        dietary_prefs.append("Vegan")
+    return 'Okay with anything' if len(dietary_prefs) == 0 else ', '.join(dietary_prefs)
+
+def collect_cuisine_prefs(user):
+    cuisine_prefs = []
+    if user["south_asian"]:
+        cuisine_prefs.append("South Asian")
+    if user["east_asian"]:
+        cuisine_prefs.append("East Asian")
+    if user["american"]:
+        cuisine_prefs.append("American")
+    if user["mexican"]:
+        cuisine_prefs.append("Mexican")
+    if user["mediterranean"]:
+        cuisine_prefs.append("Mediterranean")
+    if user["italian"]:
+        cuisine_prefs.append("Italian")
+    return 'Okay with anything' if len(cuisine_prefs) == 0 else ', '.join(cuisine_prefs)
+
 def recommend_restaurants(users, restaurants, top_k=3):
     friend_template = """Friend: {}
 Cuisine Preferences: {}
@@ -53,29 +77,10 @@ Response:
     # 1. Prompt engineering
     friends_template = ""
     for user in users:
-        cuisine_prefs = []
-        if user["south_asian"]:
-            cuisine_prefs.append("South Asian")
-        if user["east_asian"]:
-            cuisine_prefs.append("East Asian")
-        if user["american"]:
-            cuisine_prefs.append("American")
-        if user["mexican"]:
-            cuisine_prefs.append("Mexican")
-        if user["mediterranean"]:
-            cuisine_prefs.append("Mediterranean")
-        if user["italian"]:
-            cuisine_prefs.append("Italian")
-
-        dietary_prefs = []
-        if user["vegetarian"]:
-            dietary_prefs.append("Vegetarian")
-        if user["vegan"]:
-            dietary_prefs.append("Vegan")
-
-        cuisine_prefs_str = 'Okay with anything' if len(cuisine_prefs) == 0 else ', '.join(cuisine_prefs)
-        dietary_prefs_str = 'Okay with anything' if len(dietary_prefs) == 0 else ', '.join(dietary_prefs)
-        friends_template += friend_template.format(user['name'], cuisine_prefs_str, dietary_prefs_str, user['budget'])
+        friends_template += friend_template.format(user['name'],
+                                                   collect_cuisine_prefs(user),
+                                                   collect_dietary_prefs(user),
+                                                   user['budget'])
     
     restaurants_template = ""
     for restaurant in restaurants:
@@ -89,6 +94,3 @@ Response:
     restaurant_names = call_together_ai(formatted_prompt)
     restaurants_filtered = [r for r in restaurants if r['name'] in restaurant_names]
     return random.choice(restaurants_filtered)
-
-def friend_insight(user, friend):
-    raise NotImplementedError

@@ -15,7 +15,7 @@ from datetime import datetime, timedelta
 import requests
 
 from friendly_food_finder_dev.GoogleAPI import does_user_have_conflict
-from friendly_food_finder_dev.pages.llm import recommend_restaurants
+from friendly_food_finder_dev.pages.llm import recommend_restaurants, collect_cuisine_prefs, collect_dietary_prefs, call_together_ai
 
 from google.auth.transport import requests as googlerequests
 from google.oauth2.id_token import verify_oauth2_token
@@ -141,18 +141,47 @@ class State(rx.State):
         print(self.tokeninfo)
         pass
 
+    def friend_insight(self, user, friend):
+        prompt = """Instruction:
+I'm building a social networking app for friends to hangout together and get food. Here is the signed in user's preferences:
+Cuisine Preferences - {}
+Dietary Preferences - {}
+
+And here is their friend's preferences (name: {}):
+Cuisine Preferences - {}
+Dietary Preferences - {}
+
+Write a small message, less than 15 words, describing an insight about how they are similar. Address the signed in user as "you". Don't include anything in your response except the message itself. Add a food emoji at the beginning of the message that's relevant to the cuisine/dietary preferences being described. It must be no less than 15 words - this is very important!
+---
+Response:
+"""
+
+        formatted_prompt = prompt.format(
+            collect_cuisine_prefs(user),
+            collect_dietary_prefs(user),
+            friend['name'].split(' ')[0],
+            collect_cuisine_prefs(friend),
+            collect_dietary_prefs(friend)
+        )
+
+        return call_together_ai(formatted_prompt)
+
     def user_add_friend(self):
         friend_doc = firestore_client.read_from_document('user', self.user_add_friend_email)
         if friend_doc is None:
             return rx.window_alert('No user exists with this email!')
+        friend_name = friend_doc['name']
+        user_doc_name = self.tokeninfo["email"]
+        user_docref = firestore_client.db.collection("user").document(user_doc_name)
+        user_docref.update({"friends": ArrayUnion([{self.user_add_friend_email: {
+            'closeness': "Hella tight",
+            'last_hangout': 0,
+            'similarities': self.friend_insight(self.user_doc, friend_doc),
+        }}])})
         firestore_client.write_data_to_collection('friend', str(uuid.uuid1()), {
             'requester': self.tokeninfo['email'],
             'requestee': self.user_add_friend_email,
         })
-        friend_name = friend_doc['name']
-        user_doc_name = self.tokeninfo["email"]
-        user_docref = firestore_client.db.collection("user").document(user_doc_name)
-        user_docref.update({"friends": ArrayUnion([{self.user_add_friend_email: {'closeness': "Hella tight", 'last_hangout': random.randint(1, 23)}}])})
         print("Success!")
 
     @rx.var
@@ -167,6 +196,7 @@ class State(rx.State):
                 if user_doc['email'] in friend_data[i]:
                     user_doc["last_hangout"] = friend_data[i][user_doc['email']]["last_hangout"]
                     user_doc["closeness"] = friend_data[i][user_doc['email']]["closeness"]
+                    user_doc["similarities"] = friend_data[i][user_doc['email']]["similarities"]
                     break
 
             if expected_last_hangout[user_doc["closeness"]] <= user_doc["last_hangout"]:
