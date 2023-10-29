@@ -59,7 +59,9 @@ class State(rx.State):
                 'mediterranean': False,
                 'italian': False,
                 'budget': '$',
-                'friends': []
+                'friends': [],
+                'latitude': '37.7845607111444',
+                'longitude': '-122.40337703253672'
             }
             firestore_client.write_data_to_collection('user', self.tokeninfo['email'], user_doc)
         
