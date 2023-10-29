@@ -42,128 +42,41 @@ def eatNow() -> rx.Component:
         # ),
         rx.spacer(),
         rx.hstack(
-            *[
-                rx.card(
+            rx.foreach(State.possible_meals,
+                lambda meal: rx.card(
                     rx.vstack(
+                        rx.heading(meal[0]),
+                        rx.button("Invite!", on_click=lambda: State.invite(0, 0, 0)),
                         rx.hstack(
                             rx.link(
-                                rx.text(meal[1].get("name")),
-                                href=meal[1].get("url"),
+                                rx.text(meal[1]),
+                                href=meal[2],
                                 color="rgb(2,133,194)",
                             ),
-                            rx.text(meal[1].get("price")),
+                            rx.text(meal[3]),
                         ),
                         # rx.image(src=folium.Marker([meal[1].get('coordinates').get('latitude'), meal[1].get('coordinates').get('longitude')], tooltip=meal[1].get("mame")).add_to(folium.Map(location=[meal[1].get('coordinates').get('latitude'), meal[1].get('coordinates').get('longitude')], zoom_start=15)).get_root().render(), width="300px", height="300px"),
-                        rx.image(src=meal[1].get("image_url"), width="300px", height="250px"),
+                        rx.image(src=meal[4], width="300px", height="250px"),
                     ),
-                    header=rx.heading(meal[0]),
-                )
-                for meal in possible_meals()
-            ]
+            ))
+                # rx.card(
+                #     rx.vstack(
+                #         rx.heading(meal[0]),
+                #         rx.button("Invite!", on_click=lambda: State.invite(0, 0, 0)),
+                #         rx.hstack(
+                #             rx.link(
+                #                 rx.text(meal[1].get("name")),
+                #                 href=meal[1].get("url"),
+                #                 color="rgb(2,133,194)",
+                #             ),
+                #             rx.text(meal[1].get("price")),
+                #         ),
+                #         # rx.image(src=folium.Marker([meal[1].get('coordinates').get('latitude'), meal[1].get('coordinates').get('longitude')], tooltip=meal[1].get("mame")).add_to(folium.Map(location=[meal[1].get('coordinates').get('latitude'), meal[1].get('coordinates').get('longitude')], zoom_start=15)).get_root().render(), width="300px", height="300px"),
+                #         rx.image(src=meal[1].get("image_url"), width="300px", height="250px"),
+                #     ),
+                # )
+                # for meal in State.possible_meals
         )
     )
 
-def haversine(lat1, lon1, lat2, lon2):
-    # Radius of the Earth in meters
-    earth_radius = 6371000
 
-    # Convert latitude and longitude from degrees to radians
-    lat1 = math.radians(lat1)
-    lon1 = math.radians(lon1)
-    lat2 = math.radians(lat2)
-    lon2 = math.radians(lon2)
-
-    # Haversine formula
-    dlat = lat2 - lat1
-    dlon = lon2 - lon1
-    a = math.sin(dlat/2)**2 + math.cos(lat1) * math.cos(lat2) * math.sin(dlon/2)**2
-    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
-    distance = earth_radius * c
-
-    return distance
-
-def get_free_friends():
-    friend_emails = [list(x.keys())[0] for x in firestore_client.read_from_document('user', 'ayushibatwara@gmail.com').get('friends')]
-    friends = [firestore_client.read_from_document('user', friend_email) for friend_email in friend_emails]
-    friends = [friend for friend in friends if not does_user_have_conflict(friend['email'], 0, 1)]
-    friends = [friend for friend in friends if haversine(37.7845607111444, -122.40337703253672, friend['latitude'], friend['longitude']) < 1000]
-    return friends
-
-def possible_meals():
-    friends = get_free_friends()
-    
-    radius = 600
-    
-    # TODO need user doc
-    user = firestore_client.read_from_document('user', 'ayushibatwara@gmail.com')
-    # viable_list = get_nearby_restaurants(user, radius)
-    viable_list = json.load(open('restaurant_pre_list.json', 'r'))['data']
-    # get_nearby_restaurants(user, radius)
-
-    price_set = ['$', '$$', '$$$']
-    viable_list = [x for x in viable_list if x.get("price") in price_set]
-    possible_meals = {}
-
-    # for friend in friends:
-    #     intersection = [dict1 for dict1 in viable_list for dict2 in viable_list if dict1.get("name") == dict2.get("name")]
-    #     if intersection:
-    #         possible_meals[friend.get('name')] = intersection
-
-    for friend in friends:
-        possible_meals[friend.get('name')] = viable_list
-
-    keys = list(possible_meals.keys())
-    random.shuffle(keys)
-
-    selected_suggestions = []
-
-    for key in keys[:3]:
-        items = possible_meals[key]
-        selected_item = random.choice(items)
-        selected_suggestions.append((key, selected_item))
-
-    return selected_suggestions
-
-def get_nearby_restaurants(user, radius=600):
-    api_key = os.environ.get('YELP_API_KEY')
-
-    # TODO: get lat long by username
-    latitude, longitude = 37.7845607111444, -122.40337703253672
-
-    # Set the search parameters
-    params = {
-        'latitude': latitude,
-        'longitude': longitude,
-        'categories': 'restaurants',
-        'radius': radius,  # Search radius in meters
-    }
-
-    url = 'https://api.yelp.com/v3/businesses/search'
-
-    headers = {
-        'Authorization': f'Bearer {api_key}',
-    }
-
-    response = requests.get(url, headers=headers, params=params)
-
-    is_vegetarian = user.get('vegetarian')
-    is_vegan = user.get('vegan')
-
-    restaurants = []
-    if response.status_code == 200:
-        data = response.json()
-        for business in data.get('businesses', []):
-            if is_vegetarian or is_vegan:
-                if is_vegan:
-                    if business.get('attributes') and business['attributes'].get('liked_by_vegans'):
-                        restaurants.append(business)
-                else:
-                    if business.get('attributes') and business['attributes'].get('liked_by_vegetarians'):
-                        restaurants.append(business)
-            else:
-                restaurants.append(business)
-            restaurants.append(business)
-    else:
-        print(f"Error: {response.status_code} - {response.text}")
-
-    return restaurants
