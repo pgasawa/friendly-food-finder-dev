@@ -243,10 +243,16 @@ Response:
 
     @rx.var
     def populate_clusters(self) -> List:
-        scheduler = Scheduler(self.tokeninfo.get('email'))
-        scheduler.populate_with_firebase_data()
-        scheduler.populate_adjacency_matrix()
-        return scheduler.generate_groupings()
+        if self.id_token_json == "":
+            return []
+        
+        if self.current_path != "/scheduleEat":
+            return []
+        else:
+            scheduler = Scheduler(self.tokeninfo.get('email'))
+            scheduler.populate_with_firebase_data()
+            scheduler.populate_adjacency_matrix()
+            return scheduler.generate_groupings()
 
     def user_show_available_friends():
         raise NotImplementedError
@@ -395,17 +401,20 @@ Response:
         if self.id_token_json == "":
             return []
         
-        invites = []
-        docs = firestore_client.get_all_documents_from_collection("invites")
-        for doc in docs:
-            if doc.get("receiver") == self.tokeninfo["email"]:
-                invites.append((doc.get("receiverName"), doc.get("location"), doc.get("locationurl"), 
-                            doc.get("expensiveness"), doc.get("locationImage"), 
-                            doc.get("senderTimeDistance"), doc.get("recieverTimeDistance"), max(doc.get("senderTimeDistance"), doc.get("recieverTimeDistance")),
-                            doc.get("startTime"), doc.get("endTime"), 
-                            doc.get("receiver"), doc.get("senderName"), doc.get("sender"), False, False))
-        print(invites, self.counter)
-        return invites
+        if self.current_path != "/notifications":
+            return []
+        else:
+            invites = []
+            docs = firestore_client.get_all_documents_from_collection("invites")
+            for doc in docs:
+                if doc.get("receiver") == self.tokeninfo["email"]:
+                    invites.append((doc.get("receiverName"), doc.get("location"), doc.get("locationurl"), 
+                                doc.get("expensiveness"), doc.get("locationImage"), 
+                                doc.get("senderTimeDistance"), doc.get("recieverTimeDistance"), max(doc.get("senderTimeDistance"), doc.get("recieverTimeDistance")),
+                                doc.get("startTime"), doc.get("endTime"), 
+                                doc.get("receiver"), doc.get("senderName"), doc.get("sender"), False, False))
+            print(invites, self.counter)
+            return invites
 
     @rx.cached_var
     def number_of_incoming_invite(self) -> int:
@@ -417,6 +426,7 @@ Response:
         for doc in docs:
             if doc.get("receiver") == self.tokeninfo["email"]:
                 count += 1
+        print("Num notifs", count)
         return count
     
     def decline_incoming_invite(self, senderEmail):
