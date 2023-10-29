@@ -24,7 +24,7 @@ def feed() -> rx.Component:
     return rx.vstack(
         rx.heading("Feed", font_size="3em"),
         rx.text("What's going on?"),
-        *eventCards,
+        *eventCards
     )
 
 def eventCard(event) -> rx.Component:

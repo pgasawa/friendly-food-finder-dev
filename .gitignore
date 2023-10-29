@@ -1,9 +1,9 @@
 *.db
 *.py[cod]
+.DS_Store
 .env
 .web
 __pycache__/
 credentials.json
 firebase-key.json
 venv/*
-.DS_Store
