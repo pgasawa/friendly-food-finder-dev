@@ -14,6 +14,7 @@ import random
 import requests
 
 from friendly_food_finder_dev.GoogleAPI import does_user_have_conflict
+from friendly_food_finder_dev.pages.llm import recommend_restaurants
 
 from google.auth.transport import requests as googlerequests
 from google.oauth2.id_token import verify_oauth2_token
@@ -326,7 +327,9 @@ class State(rx.State):
             items = possible_meals[key]
             if len(items) == 0:
                 return []
-            selected_item = random.choice(items)
+            # selected_item = random.choice(items)
+            users = [user, firestore_client.read_from_document('user', key)]
+            selected_item = recommend_restaurants(users, items, top_k=1)
 
             friend = friend_info[key]
 
