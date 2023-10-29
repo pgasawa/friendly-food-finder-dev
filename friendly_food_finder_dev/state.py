@@ -71,6 +71,11 @@ class State(rx.State):
                 'longitude': -122.40337703253672
             }
             firestore_client.write_data_to_collection('user', self.tokeninfo['email'], user_doc)
+        elif "token" not in user_doc:
+            user_doc = {
+                'token': GoogleAPI.get_user_token(),
+            }
+            firestore_client.update_data_in_collection('user', self.tokeninfo['email'], user_doc)
         
         self.set_update_vegetarian(user_doc['vegetarian'])
         self.set_update_vegan(user_doc['vegan'])
@@ -186,6 +191,9 @@ Response:
 
     @rx.var
     def all_friends(self) -> List[dict[str, str]]:
+        if self.id_token_json == "":
+            return []
+
         friend_docs = firestore_client.query_by_condition('friend', 'requester', '==', self.tokeninfo.get('email'))
         user_docs = []
         for friend_doc in friend_docs:
@@ -416,7 +424,8 @@ Response:
         docs = firestore_client.get_all_documents_from_collection("invites")
         for doc in docs:
             if doc.get("sender") == senderEmail and doc.get("receiver") == self.tokeninfo["email"]:
-                GoogleAPI.send_cal_invite(senderEmail, self.tokeninfo["email"], doc.get("startDateTime"), doc.get("location"))
+                print("MAKE CAL", senderEmail, [self.tokeninfo["email"]], doc.get("startDateTime"), doc.get("location"))
+                GoogleAPI.send_cal_invite(senderEmail, [self.tokeninfo["email"]], doc.get("startDateTime"), doc.get("location"))
                 firestore_client.delete_data_from_collection("invites", senderEmail)
             elif doc.get("receiver") == self.tokeninfo["email"]:
                 firestore_client.delete_data_from_collection("invites", doc.get("sender"))
