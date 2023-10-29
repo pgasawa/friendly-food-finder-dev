@@ -242,13 +242,14 @@ Response:
         user_docref.update({"friends": friend_data})
 
     @rx.var
-    def populate_clusters(self) -> List:
+    def populate_clusters(self) -> List[List[List[List]]]:
         if self.id_token_json == "":
-            return []
+            return [[]]
         
         if self.current_path != "/scheduleEat":
-            return []
+            return [[]]
         else:
+            print("I reached here")
             scheduler = Scheduler(self.tokeninfo.get('email'))
             scheduler.populate_with_firebase_data()
             scheduler.populate_adjacency_matrix()

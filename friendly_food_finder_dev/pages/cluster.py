@@ -47,23 +47,26 @@ class Scheduler:
         for friend_dict in self.friends:
             for key in friend_dict:
                 self.friend_emails.append(key)
-        self.friend_emails.append(self.user_email)
+        
         for friend in self.friend_emails:
             self.friends_data[friend] = firestore_client.read_from_document("user", friend)["friends"]
+        self.friend_emails.append(self.user_email)
+        self.friends_data[self.user_email] = firestore_client.read_from_document("user", self.user_email)
         
 
     def generate_groupings(self):
 
         # Create a graph from the adjacency matrix
-        n_clusters = max(2, len(self.adjacency_matrix) // 2)  # Number of clusters you want to find
+        n_clusters = 1 if len(self.adjacency_matrix) == 1 else len(self.adjacency_matrix) // 2  # Number of clusters you want to find
         spectral_clustering = SpectralClustering(n_clusters=n_clusters, affinity='precomputed')
 
         # Fit the model to the adjacency matrix
         labels = spectral_clustering.fit_predict(self.adjacency_matrix)
         self.groups = {i: [] for i in range(0, n_clusters)}
         for i in range(len(labels)):
-            self.groups[labels[i]].append(self.friend_emails[i])
-        print("done clustering", self.groups)
+            personObj = firestore_client.read_from_document("user", self.friend_emails[i])
+            self.groups[labels[i]].append([self.friend_emails[i], personObj["name"], personObj["picture"]])
+        print("done clustering ODEARDEARDEAR")
         return list(self.groups.values())
 
 
