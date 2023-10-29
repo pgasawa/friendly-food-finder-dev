@@ -5,7 +5,7 @@ from friendly_food_finder_dev.pages.auth import require_google_login
 from friendly_food_finder_dev.firebase import firestore_client
 import reflex as rx
 
-@template(route="/friends", title="Friends")
+@template(route="/friends", title="Friends - OmNom")
 @require_google_login
 def friends() -> rx.Component:
     """The friends page.
@@ -24,7 +24,12 @@ def friends() -> rx.Component:
         rx.spacer(),
         rx.spacer(),
         rx.spacer(),
-        rx.foreach(State.all_friends, friendComponent),
+        rx.cond(
+            State.all_friends.length() > 0,
+            rx.foreach(State.all_friends, friendComponent),
+            rx.text("You currently don't have any friends. Add some!"),
+        ),
+        
         rx.spacer()
     )
 

@@ -6,7 +6,7 @@ from friendly_food_finder_dev.utils import prettydate
 import reflex as rx
 from friendly_food_finder_dev.state import State
 
-@template(route="/notifications", title="Notifications")
+@template(route="/notifications", title="Notifications - OmNom")
 @require_google_login
 def notifications() -> rx.Component:
     """The notifs page.

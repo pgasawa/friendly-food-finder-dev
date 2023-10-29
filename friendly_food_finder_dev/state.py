@@ -213,6 +213,7 @@ Response:
                 friendship_insight = ""
             user_doc['friendship_insight'] = friendship_insight
             user_docs.append(user_doc)
+        user_docs.sort(key=lambda x: (-len(x['friendship_insight']), x['last_hangout']))
         return user_docs
     
     def update_profile(self, prefs: dict[str, bool]):

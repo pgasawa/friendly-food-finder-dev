@@ -9,7 +9,7 @@ import datetime
 from friendly_food_finder_dev.firebase import firestore_client
 from friendly_food_finder_dev.state import State
 
-@template(route="/feed", title="Feed")
+@template(route="/feed", title="Feed - OmNom")
 @require_google_login
 def feed() -> rx.Component:
     """The feed page.
