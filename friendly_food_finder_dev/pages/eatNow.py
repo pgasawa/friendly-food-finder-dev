@@ -46,7 +46,6 @@ def eatNow() -> rx.Component:
                 lambda meal: rx.card(
                     rx.vstack(
                         rx.heading(meal[0]),
-                        rx.button("Invite!", on_click=lambda: State.invite(0, 0, 0)),
                         rx.hstack(
                             rx.link(
                                 rx.text(meal[1]),
@@ -56,6 +55,8 @@ def eatNow() -> rx.Component:
                             rx.text(meal[3]),
                         ),
                         rx.text(meal[5] + " minutes away"),
+                        rx.button("Invite!", on_click=lambda: State.invite(0, 0, 0)),
+                        rx.text("Schedule for " + meal[7] + " to " + meal[8]),
                         # rx.image(src=folium.Marker([meal[1].get('coordinates').get('latitude'), meal[1].get('coordinates').get('longitude')], tooltip=meal[1].get("mame")).add_to(folium.Map(location=[meal[1].get('coordinates').get('latitude'), meal[1].get('coordinates').get('longitude')], zoom_start=15)).get_root().render(), width="300px", height="300px"),
                         rx.image(src=meal[4], width="300px", height="250px"),
                     ),

@@ -11,7 +11,7 @@ import json
 import time
 import math
 import random
-import requests
+from datetime import datetime, timedelta
 
 from friendly_food_finder_dev.GoogleAPI import does_user_have_conflict
 
@@ -336,9 +336,22 @@ class State(rx.State):
             
             yourDistance = self.calculate_time(userLat, userLong, restLat, restLong)
             friendDistance = self.calculate_time(friendLat, friendLong, restLat, restLong)
-            print("Time", yourDistance, friendDistance)
 
-            selected_suggestions.append((friend.get("name"), selected_item.get('name'), selected_item.get('url'), selected_item.get('price'), selected_item.get('image_url'), str(yourDistance), str(max(yourDistance, friendDistance))))
+            print(datetime.now())
+            print(datetime.now() + timedelta(minutes=max(yourDistance, friendDistance)))
+            earliestDateTime = datetime.now() + timedelta(minutes=max(yourDistance, friendDistance))
+            # addMinutes = (int(earliestDateTime.strftime("%M")) % 5 + 4) // 5 * 5 - int(earliestDateTime.strftime("%M"))
+            addMinutes = 5 # RNG
+            print(earliestDateTime)
+            print(addMinutes)
+            startDateTime = earliestDateTime + timedelta(minutes=addMinutes)
+            endDateTime = startDateTime + timedelta(hours=1)
+
+            print(startDateTime.strftime("%I:%M %p"))
+            print(endDateTime.strftime("%I:%M %p"))
+
+            selected_suggestions.append((friend.get("name"), selected_item.get('name'), selected_item.get('url'), selected_item.get('price'), selected_item.get('image_url'), 
+                                         str(yourDistance), str(max(yourDistance, friendDistance)), startDateTime.strftime("%I:%M %p"), endDateTime.strftime("%I:%M %p")))
 
         # print(selected_suggestions)
         return selected_suggestions
