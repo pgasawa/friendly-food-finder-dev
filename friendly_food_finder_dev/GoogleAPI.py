@@ -22,7 +22,7 @@ def get_user_token():
     creds = flow.run_local_server(port=0)
     return creds.to_json()
 
-def does_user_have_conflict(userID, startHourInterval=0, endHourInterval=2):
+def does_user_have_conflict(user_doc, startHourInterval=0, endHourInterval=2):
     """Finds if there are any conflicting events in the next hours.
     Looks for events anywhere between now+startHourInterval and now+endHourInterval.
     Returns True if there is any events within the next hours.
@@ -30,7 +30,6 @@ def does_user_have_conflict(userID, startHourInterval=0, endHourInterval=2):
     NOTE: Full day events are also considered conflicts.
     """
     try:
-        user_doc = firestore_client.read_from_document('user', userID)
         creds = Credentials.from_authorized_user_info(json.loads(user_doc['token']), SCOPES)
 
         service = build('calendar', 'v3', credentials=creds)
