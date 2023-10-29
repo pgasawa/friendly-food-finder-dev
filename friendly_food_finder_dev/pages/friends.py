@@ -19,7 +19,7 @@ def friends() -> rx.Component:
         rx.spacer(),
         rx.hstack(
             rx.input(on_change=State.set_user_add_friend_email, placeholder="Add Friend", type_="email"),
-            rx.button("Add", on_click=State.user_add_friend, bg="lightblue", color="black"),
+            rx.button("Add", on_click=State.user_add_friend, color="black", background_color="#e3fc9d"),
         ),
         rx.spacer(),
         rx.spacer(),

@@ -38,13 +38,13 @@ def menu_button() -> rx.Component:
                 *[
                     rx.menu_item(
                         rx.link(
-                            page["title"],
+                            page["title"].split(" - ")[0],
                             href=page["route"],
                             width="100%",
                         )
                     )
                     for page in get_decorated_pages() if 
-                    page.get("title", page["route"].strip("/").capitalize()) not in ["Home", "Eat Now", "Feed", "Friends", "Schedule Eat", "Auth", "Notifications"]
+                    page.get("title", page["route"].strip("/").capitalize()) not in ["Home - OmNom", "Eat Now - OmNom", "Feed - OmNom", "Friends - OmNom", "Schedule Eat - OmNom", "Auth - OmNom", "Notifications - OmNom"]
                 ]
             ),
         ),
