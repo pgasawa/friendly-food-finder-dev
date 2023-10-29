@@ -428,7 +428,7 @@ Response:
             docs = firestore_client.get_all_documents_from_collection("invites")
             for doc in docs:
                 if doc.get("sender") == self.tokeninfo["email"]:
-                    return [(doc.get("recieverName"), doc.get("location"), doc.get("locationurl"), 
+                    return [(doc.get("receiverName"), doc.get("location"), doc.get("locationurl"), 
                             doc.get("expensiveness"), doc.get("locationImage"), 
                             doc.get("senderTimeDistance"), doc.get("recieverTimeDistance"), max(doc.get("senderTimeDistance"), doc.get("recieverTimeDistance")),
                             doc.get("startTime"), doc.get("endTime"), 
