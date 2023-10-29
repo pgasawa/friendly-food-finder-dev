@@ -1,6 +1,7 @@
 """The scheduleEat page."""
 from friendly_food_finder_dev.templates import template
 from friendly_food_finder_dev.pages.auth import require_google_login
+from friendly_food_finder_dev.state import State
 
 import reflex as rx
 
@@ -27,6 +28,26 @@ def scheduleEat() -> rx.Component:
                         src="/paneer.png",
                         height="7.5em",
                     ),
+                    # rx.vstack(
+                    #     rx.foreach(State.possible_meals,
+                    #         lambda meal: rx.card(
+                    #             rx.vstack(
+                    #                 rx.heading(meal[0]),
+                    #                 rx.hstack(
+                    #                     rx.link(
+                    #                         rx.text(meal[1]),
+                    #                         href=meal[2],
+                    #                         color="rgb(2,133,194)",
+                    #                     ),
+                    #                     rx.text(meal[3]),
+                    #                 ),
+                    #                 rx.text(meal[5] + " minutes away"),
+                    #                 rx.button("Invite!", on_click=lambda: State.invite(0, 0, 0)),
+                    #                 rx.text("Schedule for " + meal[7] + " to " + meal[8]),
+                    #                 rx.image(src=meal[4], width="300px", height="250px"),
+                    #             ),
+                    #     ))
+                    # ),
                 ),
                 footer=rx.heading("Footer", size="sm"),
                 width="15em",

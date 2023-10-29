@@ -5,13 +5,7 @@ from friendly_food_finder_dev.pages.auth import require_google_login
 from friendly_food_finder_dev.state import State
 from friendly_food_finder_dev.firebase import firestore_client
 
-import math
 import reflex as rx
-import random
-import requests
-import json
-# import folium
-import os
 
 from dotenv import load_dotenv
 
@@ -29,18 +23,6 @@ def eatNow() -> rx.Component:
     return rx.vstack(
         rx.heading("Eat Now!", font_size="3em"),
         rx.text("Time to spontaneously eat!"),
-        # rx.checkbox_group(
-        #     rx.checkbox("$", color_scheme="blue", size="md", onChange=State.lowToggle),
-        #     rx.checkbox("$$", color_scheme="blue", size="md", onChange=State.midToggle),
-        #     rx.checkbox("$$$", color_scheme="blue", size="md", onChange=State.highToggle),
-        #     space="2em",
-        # ),
-        # rx.checkbox_group(
-        #     rx.checkbox("Close", color_scheme="blue", size="md", onChange=State.closeToggle),
-        #     rx.checkbox("Medium", color_scheme="blue", size="md", onChange=State.midToggle),
-        #     rx.checkbox("Far", color_scheme="blue", size="md", onChange=State.farToggle),
-        #     space="2em",
-        # ),
         rx.spacer(),
         rx.hstack(
             rx.foreach(State.possible_meals,
