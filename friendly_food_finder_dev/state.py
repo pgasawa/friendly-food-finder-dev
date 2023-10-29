@@ -367,7 +367,7 @@ Response:
             'recieverTimeDistance': friendDistance,
             'startTime': startTime,
             'endTime': endTime,
-            'startDateTime': startDateTime.isoformat()+'Z',
+            'startDateTime': startDateTime,
         }
         firestore_client.write_data_to_collection('invites', self.tokeninfo['email'], invite_info)
 

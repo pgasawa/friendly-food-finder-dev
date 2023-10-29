@@ -14,7 +14,7 @@ from googleapiclient.errors import HttpError
 from friendly_food_finder_dev.firebase import firestore_client
 
 # If modifying these scopes, delete the file token.json.
-SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']
+SCOPES = ['https://www.googleapis.com/auth/calendar']
 
 def get_user_token():
     flow = InstalledAppFlow.from_client_secrets_file(
