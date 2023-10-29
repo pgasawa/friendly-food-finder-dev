@@ -24,6 +24,12 @@ from . import GoogleAPI
 
 CLIENT_ID = "419615612188-fupdhp748n09ba2ibt0qi9633lk1pkhp.apps.googleusercontent.com"
 
+expected_last_hangout = {
+    'Hella tight': 7,
+    'Kinda close': 14,
+    'Lowkey chill': 21
+}
+
 class State(rx.State):
     """Base state for the app.
 
@@ -160,7 +166,14 @@ class State(rx.State):
             for i in range(len(friend_data)):
                 if user_doc['email'] in friend_data[i]:
                     user_doc["last_hangout"] = friend_data[i][user_doc['email']]["last_hangout"]
+                    user_doc["closeness"] = friend_data[i][user_doc['email']]["closeness"]
                     break
+
+            if expected_last_hangout[user_doc["closeness"]] <= user_doc["last_hangout"]:
+                friendship_insight = "💡 It's been a while since you both hung out, so we'll recommend a hangout with {} soon!".format(user_doc['name'].split(' ')[0])
+            else:
+                friendship_insight = ""
+            user_doc['friendship_insight'] = friendship_insight
             user_docs.append(user_doc)
         return user_docs
     

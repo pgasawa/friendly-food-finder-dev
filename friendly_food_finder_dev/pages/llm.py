@@ -1,21 +1,37 @@
 import requests
 import random
 
-friend_template = """Friend: {}
+def call_together_ai(prompt: str) -> str:
+    endpoint = 'https://api.together.xyz/inference'
+    TOGETHER_API_KEY = 'a98fedd4c4e8d8fb4f41445322b8e766e0f22b96346cde3c56d8b88f8ea5e7ba'
+
+    res = requests.post(endpoint, json={
+        'model': 'togethercomputer/llama-2-13b-chat',
+        'prompt': prompt,
+        'max_tokens': 200,
+    }, headers={
+        'Authorization': f'Bearer {TOGETHER_API_KEY}',
+        'User-Agent': 'Calhacks23'
+    })
+
+    return res.json()['output']['choices'][0]['text']
+
+def recommend_restaurants(users, restaurants, top_k=3):
+    friend_template = """Friend: {}
 Cuisine Preferences: {}
 Dietary Preferences: {}
 Budget: {}
 
 """
 
-restaurant_template = """Restaurant Name: {}
+    restaurant_template = """Restaurant Name: {}
 Yelp Categories: {}
 Price Level: {}
 Rating: {}
 
 """
 
-prompt = """Instruction:
+    prompt = """Instruction:
 I have a few restaurants that I am considering to eat at with my friends. Below are my friends with their dietary preferences, as well as some restaurants of interest along with some relevant attributes for each restaurant.
 
 Select the top {} restaurants that you think my friends would most enjoy eating at as a semicolon-separated list. Choose restaurants that match my friends' dietary/cuisine preferences and budgets the most, and rank them from your best choice to worst choice. Format your answer like: Restaurant 1; Restaurant 2; Restaurant 3; etc. Do not include any other text beyond this restaurant list in your response!
@@ -34,22 +50,6 @@ Restaurants:
 Response:
 """
 
-def call_together_ai(prompt: str) -> str:
-    endpoint = 'https://api.together.xyz/inference'
-    TOGETHER_API_KEY = 'a98fedd4c4e8d8fb4f41445322b8e766e0f22b96346cde3c56d8b88f8ea5e7ba'
-
-    res = requests.post(endpoint, json={
-        'model': 'togethercomputer/llama-2-13b-chat',
-        'prompt': prompt,
-        'max_tokens': 200,
-    }, headers={
-        'Authorization': f'Bearer {TOGETHER_API_KEY}',
-        'User-Agent': 'Calhacks23'
-    })
-
-    return res.json()['output']['choices'][0]['text']
-
-def recommend_restaurants(users, restaurants, top_k=3):
     # 1. Prompt engineering
     friends_template = ""
     for user in users:
@@ -89,3 +89,6 @@ def recommend_restaurants(users, restaurants, top_k=3):
     restaurant_names = call_together_ai(formatted_prompt)
     restaurants_filtered = [r for r in restaurants if r['name'] in restaurant_names]
     return random.choice(restaurants_filtered)
+
+def friend_insight(user, friend):
+    raise NotImplementedError
