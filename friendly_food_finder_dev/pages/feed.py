@@ -30,8 +30,8 @@ def eventCard(event) -> rx.Component:
     attendees = event[0]
     restaurant = event[1]
     time = event[2]
-    formatted_date = f"{calendar.month_name[int(time[5:7])]} {time[8:10]}, {time[0:4]} at {time[11:19]}"
-    avatars = [rx.avatar(name=attendant, size="md") for attendant in attendees]
+    formatted_date = f"{calendar.month_name[int(time[5:7])]} {time[8:10]}, {time[0:4]}"
+    avatars = [rx.image(src=firestore_client.read_from_document("user", attendant)['picture'], width="100px", height="auto", border_radius="50px 50px", border="2px solid #555", box_shadow="lg",) for attendant in attendees]
 
     return rx.card(
         rx.vstack(
@@ -39,10 +39,10 @@ def eventCard(event) -> rx.Component:
             rx.hstack(*avatars),
         ),
         rx.center(
-            rx.image( src="https://media.photographycourse.net/wp-content/uploads/2022/04/08152906/food-photographer-ideas.jpg", width="200px", height="auto")
+            rx.image( src="/paneer.png", width="200px", height="auto")
         ),
     ),
-    header=rx.heading(f"Lunch at {restaurant}", size="lg"),
+    header=rx.heading(f"Lunch @ {restaurant}", size="lg"),
     footer=rx.heading(formatted_date, size="sm"),
 )
 
