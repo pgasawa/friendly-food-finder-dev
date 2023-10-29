@@ -379,6 +379,8 @@ Response:
         }
         firestore_client.write_data_to_collection('invites', self.tokeninfo['email'], invite_info)
 
+    counter : int = 0
+
     @rx.cached_var
     def incoming_invites(self) -> List[tuple[str, str, str]]:
         if self.id_token_json == "":
@@ -393,7 +395,7 @@ Response:
                             doc.get("senderTimeDistance"), doc.get("recieverTimeDistance"), max(doc.get("senderTimeDistance"), doc.get("recieverTimeDistance")),
                             doc.get("startTime"), doc.get("endTime"), 
                             doc.get("receiver"), doc.get("senderName"), doc.get("sender"), False, False))
-        print(invites)
+        print(invites, self.counter)
         return invites
 
     @rx.cached_var
@@ -416,6 +418,7 @@ Response:
         for doc in docs:
             if doc.get("sender") == senderEmail and doc.get("receiver") == self.tokeninfo["email"]:
                 firestore_client.delete_data_from_collection("invites", senderEmail)
+        self.counter += 1
 
     def accept_incoming_invite(self, senderEmail):
         if self.id_token_json == "":
@@ -429,6 +432,7 @@ Response:
                 firestore_client.delete_data_from_collection("invites", senderEmail)
             elif doc.get("receiver") == self.tokeninfo["email"]:
                 firestore_client.delete_data_from_collection("invites", doc.get("sender"))
+        self.counter += 1
 
     @rx.cached_var
     def possible_meals(self) -> List[tuple[str, str, str]]:
