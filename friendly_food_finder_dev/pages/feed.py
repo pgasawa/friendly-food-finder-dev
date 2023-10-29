@@ -24,6 +24,8 @@ def feed() -> rx.Component:
     return rx.vstack(
         rx.heading("Feed", font_size="3em"),
         rx.text("See what your friends have been up to!"),
+        rx.spacer(),
+        rx.spacer(),
         *eventCards,
     )
 
@@ -33,6 +35,7 @@ def eventCard(event) -> rx.Component:
     time = event[2]
     description = event[3]
     picture = event[4]
+    meal = event[5]
     formatted_date = prettydate(datetime.datetime.fromisoformat(time).replace(tzinfo=None))
 
     attendant_docs = [
@@ -52,24 +55,31 @@ def eventCard(event) -> rx.Component:
         for attendant in attendant_docs
     ]
 
-    return rx.card(
-        rx.vstack(
-            rx.heading(f"Lunch at {restaurant}", size="md", width='100%', text_align='left'),
-            rx.spacer(),
-            rx.spacer(),
-            rx.text('🕒  ' + formatted_date, font_size='14px', width='100%', text_align='left', as_="b"),
-            rx.text('👥  ' + ', '.join(names), font_size='14px', width='100%', text_align='left'),
-            rx.text(description, font_size='14px', width='100%', text_align='left'),
-            rx.spacer(),
-            rx.spacer(),
-            rx.center(
-                rx.hstack(*avatars),
+    return rx.vstack(
+        rx.card(
+            rx.vstack(
+                rx.heading(f"{meal} at {restaurant}", size="md", width='100%', text_align='left'),
+                rx.spacer(),
+                rx.spacer(),
+                rx.text('🕒  ' + formatted_date, font_size='14px', width='100%', text_align='left', as_="b"),
+                rx.text('👥  ' + ', '.join(names), font_size='14px', width='100%', text_align='left'),
+                rx.text(description, font_size='14px', width='100%', text_align='left'),
+                rx.spacer(),
+                rx.spacer(),
+                rx.center(
+                    rx.hstack(*avatars),
+                ),
+                rx.center(
+                    rx.image(src=picture, width="200px", height="auto", max_height="200px"),
+                ),
+                rx.spacer(),
             ),
-            rx.center(
-                rx.image(src=picture, width="200px", height="auto")
-            ),
+            width='500px',
+            border_radius='20px',
+            box_shadow='lg'
         ),
-        width='500px'
+        rx.spacer(),
+        rx.spacer()
     )
 
 def fetch_events():
@@ -77,5 +87,6 @@ def fetch_events():
     events = []
     for doc in docs:
         doc["time"] = doc["time"].isoformat()
-        events.append([doc["attendees"], doc["restaurant"], doc["time"], doc["description"], doc["picture"]])
+        events.append([doc["attendees"], doc["restaurant"], doc["time"], doc["description"], doc["picture"], doc["meal"]])
+    events.sort(key=lambda x: x[2], reverse=True)
     return events
