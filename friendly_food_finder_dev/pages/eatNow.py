@@ -5,13 +5,7 @@ from friendly_food_finder_dev.pages.auth import require_google_login
 from friendly_food_finder_dev.state import State
 from friendly_food_finder_dev.firebase import firestore_client
 
-import math
 import reflex as rx
-import random
-import requests
-import json
-# import folium
-import os
 
 from dotenv import load_dotenv
 
@@ -29,18 +23,6 @@ def eatNow() -> rx.Component:
     return rx.vstack(
         rx.heading("Eat Now!", font_size="3em"),
         rx.text("Time to spontaneously eat!"),
-        # rx.checkbox_group(
-        #     rx.checkbox("$", color_scheme="blue", size="md", onChange=State.lowToggle),
-        #     rx.checkbox("$$", color_scheme="blue", size="md", onChange=State.midToggle),
-        #     rx.checkbox("$$$", color_scheme="blue", size="md", onChange=State.highToggle),
-        #     space="2em",
-        # ),
-        # rx.checkbox_group(
-        #     rx.checkbox("Close", color_scheme="blue", size="md", onChange=State.closeToggle),
-        #     rx.checkbox("Medium", color_scheme="blue", size="md", onChange=State.midToggle),
-        #     rx.checkbox("Far", color_scheme="blue", size="md", onChange=State.farToggle),
-        #     space="2em",
-        # ),
         rx.spacer(),
         rx.hstack(
             rx.foreach(State.possible_meals,
@@ -58,7 +40,6 @@ def eatNow() -> rx.Component:
                         rx.text(meal[5] + " minutes away"),
                         rx.button("Invite!", on_click=lambda: State.invite(0, 0, 0)),
                         rx.text("Schedule for " + meal[7] + " to " + meal[8]),
-                        # rx.image(src=folium.Marker([meal[1].get('coordinates').get('latitude'), meal[1].get('coordinates').get('longitude')], tooltip=meal[1].get("mame")).add_to(folium.Map(location=[meal[1].get('coordinates').get('latitude'), meal[1].get('coordinates').get('longitude')], zoom_start=15)).get_root().render(), width="300px", height="300px"),
                         rx.image(src=meal[4], width="300px", height="250px"),
                     ),
             ))
