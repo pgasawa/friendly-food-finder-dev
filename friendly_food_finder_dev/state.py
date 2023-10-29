@@ -312,6 +312,9 @@ class State(rx.State):
     
     def invite(self, location, friendName, friendEmail, friendDistance, startTime, endTime, selfName, locationImage, selfDistance, expensiveness, locationurl):
         # Make sure the sender doesn't have an active invite already.
+        if self.id_token_json == "":
+            return None
+        
         docs = firestore_client.get_all_documents_from_collection("invites")
         for doc in docs:
             if doc.get("sender") == self.tokeninfo["email"]:
@@ -335,6 +338,9 @@ class State(rx.State):
 
     @rx.cached_var
     def incoming_invites(self) -> List[tuple[str, str, str]]:
+        if self.id_token_json == "":
+            return []
+        
         invites = []
         docs = firestore_client.get_all_documents_from_collection("invites")
         for doc in docs:
@@ -348,6 +354,9 @@ class State(rx.State):
 
     @rx.cached_var
     def number_of_incoming_invite(self):
+        if self.id_token_json == "":
+            return []
+        
         count = 0
         docs = firestore_client.get_all_documents_from_collection("invites")
         for doc in docs:
@@ -356,12 +365,18 @@ class State(rx.State):
         return count
     
     def decline_incoming_invite(self, senderEmail):
+        if self.id_token_json == "":
+            return None
+        
         docs = firestore_client.get_all_documents_from_collection("invites")
         for doc in docs:
             if doc.get("sender") == senderEmail and doc.get("receiver") == self.tokeninfo["email"]:
                 firestore_client.delete_data_from_collection("invites", senderEmail)
 
     def accept_incoming_invite(self, senderEmail):
+        if self.id_token_json == "":
+            return None
+
         docs = firestore_client.get_all_documents_from_collection("invites")
         for doc in docs:
             if doc.get("sender") == senderEmail and doc.get("receiver") == self.tokeninfo["email"]:
