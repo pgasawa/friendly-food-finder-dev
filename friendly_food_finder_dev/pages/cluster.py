@@ -42,6 +42,7 @@ class Scheduler:
         print(self.adjacency_matrix)
 
     def populate_with_firebase_data(self):
+        print(firestore_client.read_from_document("user", self.user_email))
         self.friends = firestore_client.read_from_document("user", self.user_email)["friends"]
         for friend_dict in self.friends:
             for key in friend_dict:
@@ -54,7 +55,7 @@ class Scheduler:
     def generate_groupings(self):
 
         # Create a graph from the adjacency matrix
-        n_clusters = max(2, len(self.adjacency_matrix))  # Number of clusters you want to find
+        n_clusters = max(2, len(self.adjacency_matrix) // 2)  # Number of clusters you want to find
         spectral_clustering = SpectralClustering(n_clusters=n_clusters, affinity='precomputed')
 
         # Fit the model to the adjacency matrix
@@ -62,6 +63,8 @@ class Scheduler:
         self.groups = {i: [] for i in range(0, n_clusters)}
         for i in range(len(labels)):
             self.groups[labels[i]].append(self.friend_emails[i])
+        print("done clustering", self.groups)
+        return list(self.groups.values())
 
 
     def retrieve_top_groupings(self, k=5):

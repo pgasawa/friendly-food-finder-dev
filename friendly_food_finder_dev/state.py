@@ -241,10 +241,9 @@ Response:
         user_docref = firestore_client.db.collection("user").document(user_doc_name)
         user_docref.update({"friends": friend_data})
 
-    clusters: dict = {}
     @rx.var
-    def populate_clusters(self):
-        scheduler = Scheduler(self.tokeninfo['email'])
+    def populate_clusters(self) -> List:
+        scheduler = Scheduler(self.tokeninfo.get('email'))
         scheduler.populate_with_firebase_data()
         scheduler.populate_adjacency_matrix()
         return scheduler.generate_groupings()
