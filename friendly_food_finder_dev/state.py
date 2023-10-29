@@ -344,7 +344,7 @@ Response:
     def current_path(self):
         return self.get_current_page()
     
-    def invite(self, location, friendName, friendEmail, friendDistance, startTime, endTime, selfName, locationImage, selfDistance, expensiveness, locationurl):
+    def invite(self, location, friendName, friendEmail, friendDistance, startTime, endTime, selfName, locationImage, selfDistance, expensiveness, locationurl, startDateTime):
         # Make sure the sender doesn't have an active invite already.
         if self.id_token_json == "":
             return None
@@ -367,6 +367,7 @@ Response:
             'recieverTimeDistance': friendDistance,
             'startTime': startTime,
             'endTime': endTime,
+            'startDateTime': startDateTime.isoformat()+'Z',
         }
         firestore_client.write_data_to_collection('invites', self.tokeninfo['email'], invite_info)
 
@@ -383,7 +384,7 @@ Response:
                             doc.get("expensiveness"), doc.get("locationImage"), 
                             doc.get("senderTimeDistance"), doc.get("recieverTimeDistance"), max(doc.get("senderTimeDistance"), doc.get("recieverTimeDistance")),
                             doc.get("startTime"), doc.get("endTime"), 
-                            doc.get("receiver"), doc.get("senderName"), False))
+                            doc.get("receiver"), doc.get("senderName"), doc.get("sender"), False, False))
         print(invites)
         return invites
 
@@ -415,7 +416,7 @@ Response:
         docs = firestore_client.get_all_documents_from_collection("invites")
         for doc in docs:
             if doc.get("sender") == senderEmail and doc.get("receiver") == self.tokeninfo["email"]:
-                GoogleAPI.send_cal_invite(senderEmail, self.tokeninfo["email"], doc.get("startTime"), doc.get("endTime"))
+                GoogleAPI.send_cal_invite(senderEmail, self.tokeninfo["email"], doc.get("startDateTime"), doc.get("location"))
                 firestore_client.delete_data_from_collection("invites", senderEmail)
             elif doc.get("receiver") == self.tokeninfo["email"]:
                 firestore_client.delete_data_from_collection("invites", doc.get("sender"))
@@ -504,7 +505,7 @@ Response:
                                              selected_item.get('price'), selected_item.get('image_url'), 
                                             str(yourDistance), str(friendDistance), str(max(yourDistance, friendDistance)),
                                             startDateTime.strftime("%I:%M %p"), endDateTime.strftime("%I:%M %p"), 
-                                            key, user.get("name"), False))
+                                            key, user.get("name"), False, startDateTime))
 
             # print(selected_suggestions)
             return selected_suggestions
